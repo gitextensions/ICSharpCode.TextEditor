@@ -22,9 +22,9 @@ namespace ICSharpCode.TextEditor.Document
     /// </summary>
     public class TextMarker : ISegment
     {
-        [CLSCompliant(isCompliant: false)] protected int length = -1;
+        protected int length = -1;
 
-        [CLSCompliant(isCompliant: false)] protected int offset = -1;
+        protected int offset = -1;
 
         public TextMarker(int offset, int length, TextMarkerType textMarkerType) : this(offset, length, textMarkerType, Color.Red)
         {

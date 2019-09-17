@@ -21,9 +21,9 @@ namespace ICSharpCode.TextEditor
     /// </summary>
     public abstract class AbstractMargin
     {
-        [CLSCompliant(isCompliant: false)] protected Rectangle drawingPosition = new Rectangle(x: 0, y: 0, width: 0, height: 0);
+        protected Rectangle drawingPosition = new Rectangle(x: 0, y: 0, width: 0, height: 0);
 
-        [CLSCompliant(isCompliant: false)] protected TextArea textArea;
+        protected TextArea textArea;
 
         protected AbstractMargin(TextArea textArea)
         {

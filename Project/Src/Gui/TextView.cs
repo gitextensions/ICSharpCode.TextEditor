@@ -69,6 +69,7 @@ namespace ICSharpCode.TextEditor
         public void Dispose()
         {
             measureCache.Clear();
+            GC.SuppressFinalize(this);
         }
 
         private static int GetFontHeight(Font font)

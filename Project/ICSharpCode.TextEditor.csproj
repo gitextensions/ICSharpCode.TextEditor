@@ -1,26 +1,26 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
   <PropertyGroup>
-    <TargetFramework>net461</TargetFramework>
-    <NoWarn>$(NoWarn),1573,1591,1696,1712</NoWarn>
-    <LangVersion>latest</LangVersion>
-
-    <!-- TODO once all project migrated to SDK-style, remove this and move properties to Directory.Build.props -->
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <OutputType>Library</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <DeterministicSourcePaths Condition="'$(EnableSourceLink)' == ''">false</DeterministicSourcePaths>
   </PropertyGroup>
-  
+
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
+    <None Remove="Resources\*.xshd" />
+    <None Remove="Resources\Mode.xsd" />
+    <None Remove="Resources\RightArrow.cur" />
+    <None Remove="Resources\SyntaxModes.xml" />
+    <None Remove="Resources\TextEditorControl.bmp" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.ValueTuple" Version="$(SystemValueTupleVersion)" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\*.*" />
+    <EmbeddedResource Include="Resources\*.xshd" />
+    <EmbeddedResource Include="Resources\Mode.xsd" />
+    <EmbeddedResource Include="Resources\RightArrow.cur" />
+    <EmbeddedResource Include="Resources\SyntaxModes.xml" />
+    <EmbeddedResource Include="Resources\TextEditorControl.bmp" />
   </ItemGroup>
 
 </Project>

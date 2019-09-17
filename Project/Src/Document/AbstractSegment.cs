@@ -14,9 +14,9 @@ namespace ICSharpCode.TextEditor.Document
     /// </summary>
     public class AbstractSegment : ISegment
     {
-        [CLSCompliant(isCompliant: false)] protected int length = -1;
+        protected int length = -1;
 
-        [CLSCompliant(isCompliant: false)] protected int offset = -1;
+        protected int offset = -1;
 
         public override string ToString()
         {

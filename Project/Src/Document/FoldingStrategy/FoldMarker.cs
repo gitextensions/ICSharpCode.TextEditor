@@ -21,9 +21,9 @@ namespace ICSharpCode.TextEditor.Document
     {
         private readonly IDocument document;
 
-        [CLSCompliant(isCompliant: false)] protected int length = -1;
+        protected int length = -1;
 
-        [CLSCompliant(isCompliant: false)] protected int offset = -1;
+        protected int offset = -1;
 
         private int startLine = -1, startColumn, endLine = -1, endColumn;
 

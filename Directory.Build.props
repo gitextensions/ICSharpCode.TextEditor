@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+
+  <PropertyGroup>
+    <Copyright>Copyright &#xA9; 2000-2010 AlphaSierraPapa // Copyright &#xA9; 2019 Git Extensions</Copyright>
+    <Description>This is a GitExtensions fork of SharpDevelop .NET text editor control</Description>
+    <Version>4.0.2.6466</Version>
+    <Product>Git Extensions</Product>
+    <Company>Git Extensions</Company>
+    <Authors>ic#code // Git Extensions</Authors>
+  </PropertyGroup>
+
+
+</Project>
