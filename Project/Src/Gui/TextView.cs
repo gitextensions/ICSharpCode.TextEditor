@@ -38,7 +38,11 @@ namespace ICSharpCode.TextEditor
         /// <summary>Gets the first visible <b>logical</b> line.</summary>
         public int FirstVisibleLine
         {
-            get => textArea.Document.GetFirstLogicalLine(textArea.VirtualTop.Y/FontHeight);
+            get
+            {
+                return textArea?.Document?.GetFirstLogicalLine(textArea?.VirtualTop.Y / FontHeight ?? 0) ?? 0;
+            }
+
             set
             {
                 if (FirstVisibleLine != value)

@@ -183,6 +183,12 @@ namespace ICSharpCode.TextEditor
 
         private void SearchMatchingBracket(object sender, EventArgs e)
         {
+            if (TextView is null)
+            {
+                // May occur in tests
+                return;
+            }
+
             if (!TextEditorProperties.ShowMatchingBracket)
             {
                 TextView.Highlight = null;
