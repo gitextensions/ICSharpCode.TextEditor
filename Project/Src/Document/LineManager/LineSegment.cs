@@ -17,6 +17,8 @@ namespace ICSharpCode.TextEditor.Document
     {
         internal LineSegmentTree.Enumerator treeEntry;
 
+        public EolMarker EolMarker { get; set; }
+
         public bool IsDeleted => !treeEntry.IsValid;
 
         public int LineNumber => treeEntry.CurrentIndex;

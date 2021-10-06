@@ -200,7 +200,7 @@ namespace ICSharpCode.TextEditor
                 if (TextEditorProperties.ShowEOLMarker)
                 {
                     var eolMarkerColor = textArea.Document.HighlightingStrategy.GetColorFor("EOLMarkers");
-                    physicalXPos += DrawEOLMarker(g, eolMarkerColor.Color, selectionBeyondEOL ? bgColorBrush : backgroundBrush, physicalXPos, lineRectangle.Y);
+                    physicalXPos += DrawEOLMarker(g, eolMarkerColor.Color, selectionBeyondEOL ? bgColorBrush : backgroundBrush, physicalXPos, lineRectangle.Y, currentLine.EolMarker);
                 }
                 else
                 {
@@ -1062,17 +1062,41 @@ namespace ICSharpCode.TextEditor
             DrawString(g, "\u00BB", tabMarkerColor.GetFont(TextEditorProperties.FontContainer), color, x, y);
         }
 
-        private int DrawEOLMarker(Graphics g, Color color, Brush backBrush, int x, int y)
+        private int DrawEOLMarker(Graphics g, Color color, Brush backBrush, int x, int y, EolMarker eolMarker)
         {
             var eolMarkerColor = textArea.Document.HighlightingStrategy.GetColorFor("EOLMarkers");
 
-            var width = GetWidth(ch: '\u00B6', eolMarkerColor.GetFont(TextEditorProperties.FontContainer));
+            int eolMarkerWidth = 0;
+            string representation = "";
+
+            int backslashWidth = GetWidth(ch: '\\', eolMarkerColor.GetFont(TextEditorProperties.FontContainer));
+            int nWidth = GetWidth(ch: 'n', eolMarkerColor.GetFont(TextEditorProperties.FontContainer));
+            int rWidth = GetWidth(ch: 'r', eolMarkerColor.GetFont(TextEditorProperties.FontContainer));
+            switch (eolMarker)
+            {
+                case EolMarker.Cr:
+                    eolMarkerWidth = backslashWidth + rWidth;
+                    representation = "\\r";
+                    break;
+                case EolMarker.CrLf:
+                    eolMarkerWidth = backslashWidth + rWidth + backslashWidth + nWidth;
+                    representation = "\\r\\n";
+                    break;
+                case EolMarker.Lf:
+                    eolMarkerWidth = backslashWidth + nWidth;
+                    representation = "\\n";
+                    break;
+                case EolMarker.None:
+                default:
+                    return 0;
+            }
+
             g.FillRectangle(
                 backBrush,
-                new RectangleF(x, y, width, FontHeight));
+                new RectangleF(x, y, eolMarkerWidth, FontHeight));
 
-            DrawString(g, "\u00B6", eolMarkerColor.GetFont(TextEditorProperties.FontContainer), color, x, y);
-            return width;
+            DrawString(g, representation, eolMarkerColor.GetFont(TextEditorProperties.FontContainer), color, x, y);
+            return eolMarkerWidth;
         }
 
         private void DrawVerticalRuler(Graphics g, Rectangle lineRectangle)

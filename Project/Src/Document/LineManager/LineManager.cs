@@ -168,6 +168,7 @@ namespace ICSharpCode.TextEditor.Document
                 lineCollection.SetSegmentLength(segment, lineBreakOffset - segmentOffset);
                 var newSegment = lineCollection.InsertSegmentAfter(segment, lengthAfterInsertionPos);
                 segment.DelimiterLength = ds.Length;
+                segment.EolMarker = ds.EolMarker;
 
                 segment = newSegment;
                 lastDelimiterEnd = ds.Offset + ds.Length;
@@ -309,25 +310,35 @@ namespace ICSharpCode.TextEditor.Document
         private DelimiterSegment NextDelimiter(string text, int offset)
         {
             for (var i = offset; i < text.Length; i++)
+            {
+                bool newLineSet = false;
                 switch (text[i])
                 {
                     case '\r':
-                        if (i + 1 < text.Length)
-                            if (text[i + 1] == '\n')
-                            {
-                                delimiterSegment.Offset = i;
-                                delimiterSegment.Length = 2;
-                                return delimiterSegment;
-                            }
+                        if (i + 1 < text.Length && text[i + 1] == '\n')
+                        {
+                            delimiterSegment.Offset = i;
+                            delimiterSegment.Length = 2;
+                            delimiterSegment.EolMarker = EolMarker.CrLf;
+                            return delimiterSegment;
+                        }
+
 #if DATACONSISTENCYTEST
                         Debug.Assert(condition: false, "Found lone \\r, data consistency problems?");
 #endif
+                        newLineSet = true;
+                        delimiterSegment.EolMarker = EolMarker.Cr;
                         goto case '\n';
                     case '\n':
                         delimiterSegment.Offset = i;
                         delimiterSegment.Length = 1;
+                        if (!newLineSet)
+                        {
+                            delimiterSegment.EolMarker = EolMarker.Lf;
+                        }
                         return delimiterSegment;
                 }
+            }
             return null;
         }
 
@@ -352,6 +363,7 @@ namespace ICSharpCode.TextEditor.Document
 
         private sealed class DelimiterSegment
         {
+            internal EolMarker EolMarker = EolMarker.None;
             internal int Length;
             internal int Offset;
         }
