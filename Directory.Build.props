@@ -2,6 +2,12 @@
 <Project>
 
   <PropertyGroup>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <DeterministicSourcePaths Condition="'$(EnableSourceLink)' == ''">false</DeterministicSourcePaths>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <Copyright>Copyright &#xA9; 2000-2010 AlphaSierraPapa // Copyright &#xA9; 2019 Git Extensions</Copyright>
     <Description>This is a GitExtensions fork of SharpDevelop .NET text editor control</Description>
     <Version>4.0.2.6466</Version>
