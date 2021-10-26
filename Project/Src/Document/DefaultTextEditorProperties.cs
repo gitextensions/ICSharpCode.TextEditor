@@ -48,7 +48,7 @@ namespace ICSharpCode.TextEditor.Document
 
         public bool ShowTabs { get; set; } = false;
 
-        public bool ShowEOLMarker { get; set; } = false;
+        public EolMarkerStyle EolMarkerStyle { get; set; } = EolMarkerStyle.None;
 
         public bool ShowInvalidLines { get; set; } = false;
 

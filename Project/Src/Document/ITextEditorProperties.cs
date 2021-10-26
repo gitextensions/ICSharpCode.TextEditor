@@ -95,7 +95,7 @@ namespace ICSharpCode.TextEditor.Document
             set;
         }
 
-        bool ShowEOLMarker
+        EolMarkerStyle EolMarkerStyle
         {
             // is wrapped in text editor control
             get;

@@ -197,10 +197,9 @@ namespace ICSharpCode.TextEditor
 
                 var selectionBeyondEOL = selectionRange.EndColumn > currentLine.Length || ColumnRange.WholeColumn.Equals(selectionRange);
 
-                if (TextEditorProperties.ShowEOLMarker)
+                if (TextEditorProperties.EolMarkerStyle != EolMarkerStyle.None)
                 {
-                    var eolMarkerColor = textArea.Document.HighlightingStrategy.GetColorFor("EOLMarkers");
-                    physicalXPos += DrawEOLMarker(g, eolMarkerColor.Color, selectionBeyondEOL ? bgColorBrush : backgroundBrush, physicalXPos, lineRectangle.Y, currentLine.EolMarker);
+                    physicalXPos += DrawEOLMarker(g, selectionBeyondEOL ? bgColorBrush : backgroundBrush, physicalXPos, lineRectangle.Y, currentLine.EolMarker);
                 }
                 else
                 {
@@ -663,6 +662,17 @@ namespace ICSharpCode.TextEditor
             return fontBoundCharWidth[font][ch];
         }
 
+        public int GetWidth(Graphics g, string text, Font font)
+        {
+            int width = 0;
+            foreach (char ch in text)
+            {
+                width += GetWidth(g, ch, font);
+            }
+
+            return width;
+        }
+
         public int GetVisualColumn(int logicalLine, int logicalColumn)
         {
             var column = 0;
@@ -1062,40 +1072,35 @@ namespace ICSharpCode.TextEditor
             DrawString(g, "\u00BB", tabMarkerColor.GetFont(TextEditorProperties.FontContainer), color, x, y);
         }
 
-        private int DrawEOLMarker(Graphics g, Color color, Brush backBrush, int x, int y, EolMarker eolMarker)
+        private int DrawEOLMarker(Graphics g, Brush backBrush, int x, int y, EolMarker eolMarker)
         {
-            var eolMarkerColor = textArea.Document.HighlightingStrategy.GetColorFor("EOLMarkers");
-
-            int eolMarkerWidth = 0;
-            string representation = "";
-
-            int backslashWidth = GetWidth(ch: '\\', eolMarkerColor.GetFont(TextEditorProperties.FontContainer));
-            int nWidth = GetWidth(ch: 'n', eolMarkerColor.GetFont(TextEditorProperties.FontContainer));
-            int rWidth = GetWidth(ch: 'r', eolMarkerColor.GetFont(TextEditorProperties.FontContainer));
+            string? representation;
             switch (eolMarker)
             {
                 case EolMarker.Cr:
-                    eolMarkerWidth = backslashWidth + rWidth;
-                    representation = "\\r";
+                    representation = TextEditorProperties.EolMarkerStyle == EolMarkerStyle.Glyph ? "«" : @"\r";
                     break;
                 case EolMarker.CrLf:
-                    eolMarkerWidth = backslashWidth + rWidth + backslashWidth + nWidth;
-                    representation = "\\r\\n";
+                    representation = TextEditorProperties.EolMarkerStyle == EolMarkerStyle.Glyph ? "¤" : @"\r\n";
                     break;
                 case EolMarker.Lf:
-                    eolMarkerWidth = backslashWidth + nWidth;
-                    representation = "\\n";
+                    representation = TextEditorProperties.EolMarkerStyle == EolMarkerStyle.Glyph ? "¶" : @"\n";
                     break;
                 case EolMarker.None:
                 default:
                     return 0;
             }
 
+            HighlightColor eolMarkerColor = textArea.Document.HighlightingStrategy.GetColorFor("EOLMarkers");
+            Font font = eolMarkerColor.GetFont(TextEditorProperties.FontContainer);
+            int eolMarkerWidth = GetWidth(g, representation, font);
+
             g.FillRectangle(
                 backBrush,
                 new RectangleF(x, y, eolMarkerWidth, FontHeight));
 
-            DrawString(g, representation, eolMarkerColor.GetFont(TextEditorProperties.FontContainer), color, x, y);
+            DrawString(g, representation, font, eolMarkerColor.Color, x, y);
+
             return eolMarkerWidth;
         }
 

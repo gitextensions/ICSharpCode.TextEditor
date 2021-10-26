@@ -493,17 +493,17 @@ namespace ICSharpCode.TextEditor
         }
 
         /// <value>
-        ///     If true EOL markers are shown in the textarea
+        ///     Whether and how EOL markers are shown in the textarea
         /// </value>
         [Category("Appearance")]
-        [DefaultValue(value: false)]
-        [Description("If true EOL markers are shown in the textarea")]
-        public bool ShowEOLMarkers
+        [DefaultValue(value: EolMarkerStyle.None)]
+        [Description("Whether and how EOL markers are shown in the textarea")]
+        public EolMarkerStyle EolMarkerStyle
         {
-            get => document.TextEditorProperties.ShowEOLMarker;
+            get => document.TextEditorProperties.EolMarkerStyle;
             set
             {
-                document.TextEditorProperties.ShowEOLMarker = value;
+                document.TextEditorProperties.EolMarkerStyle = value;
                 OptionsChanged();
             }
         }
