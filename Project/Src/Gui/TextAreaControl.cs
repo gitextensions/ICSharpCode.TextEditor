@@ -354,7 +354,7 @@ namespace ICSharpCode.TextEditor
             TextArea.Invalidate();
         }
 
-        public void HandleMouseWheel(MouseEventArgs e)
+        public void HandleMouseWheel(MouseEventArgs e, bool hScroll = false)
         {
             var scrollDistance = mouseWheelHandler.GetScrollAmount(e);
             if (scrollDistance == 0)
@@ -372,9 +372,9 @@ namespace ICSharpCode.TextEditor
             }
             else
             {
-                if (TextEditorProperties.MouseWheelScrollDown)
+                if (TextEditorProperties.MouseWheelScrollDown && !hScroll)
                     scrollDistance = -scrollDistance;
-                if (ModifierKeys.HasFlag(Keys.Shift))
+                if (hScroll || ModifierKeys.HasFlag(Keys.Shift))
                 {
                     var newValue = HScrollBar.Value + HScrollBar.SmallChange*scrollDistance;
                     HScrollBar.Value = Math.Max(HScrollBar.Minimum, Math.Min(HScrollBar.Maximum - HScrollBar.LargeChange + 1, newValue));
@@ -392,6 +392,33 @@ namespace ICSharpCode.TextEditor
             base.OnMouseWheel(e);
             if (DoHandleMousewheel)
                 HandleMouseWheel(e);
+        }
+
+        /// <summary>
+        ///  Handles the WM_MOUSEHWHEEL message
+        /// </summary>
+        private void WmMouseHWheel(ref Message m)
+        {
+            if (!DoHandleMousewheel)
+                return;
+
+            Point p = new Point(Win32Util.SignedLOWORD(m.LParam), Win32Util.SignedHIWORD(m.LParam));
+            p = PointToClient(p);
+            HandledMouseEventArgs e = new (MouseButtons.None,
+                0,
+                p.X,
+                p.Y,
+                Win32Util.SignedHIWORD(m.WParam));
+
+            // Note: System/WinForms/Control.cs Makes a call to OnMouseWheel(e); at this place
+            HandleMouseWheel(e, hScroll: true);
+
+            m.Result = (IntPtr)(e.Handled ? 0 : 1);
+            if (!e.Handled)
+            {
+                // Forwarding the message to the parent window
+                DefWndProc(ref m);
+            }
         }
 
         public void ScrollToCaret()
@@ -514,21 +541,29 @@ namespace ICSharpCode.TextEditor
 
         protected override void WndProc(ref Message m)
         {
-            if (m.Msg == 0x007B)
-                if (ShowContextMenu != null)
-                {
-                    Point location = m.LParam.ToPoint();
-                    if (location.X == -1 && location.Y == -1)
+            switch (m.Msg)
+            {
+                case 0x007B: // WM_CONTEXTMENU
+                    if (ShowContextMenu != null)
                     {
-                        var pos = Caret.ScreenPosition;
-                        ShowContextMenu?.Invoke(this, new MouseEventArgs(MouseButtons.None, clicks: 0, pos.X, pos.Y + TextArea.TextView.FontHeight, delta: 0));
+                        Point location = m.LParam.ToPoint();
+                        if (location.X == -1 && location.Y == -1)
+                        {
+                            var pos = Caret.ScreenPosition;
+                            ShowContextMenu?.Invoke(this, new MouseEventArgs(MouseButtons.None, clicks: 0, pos.X, pos.Y + TextArea.TextView.FontHeight, delta: 0));
+                        }
+                        else
+                        {
+                            var pos = PointToClient(location);
+                            ShowContextMenu?.Invoke(this, new MouseEventArgs(MouseButtons.Right, clicks: 1, pos.X, pos.Y, delta: 0));
+                        }
                     }
-                    else
-                    {
-                        var pos = PointToClient(location);
-                        ShowContextMenu?.Invoke(this, new MouseEventArgs(MouseButtons.Right, clicks: 1, pos.X, pos.Y, delta: 0));
-                    }
-                }
+                    break;
+
+                case 0x020e: // WM_MOUSEHWHEEL
+                    WmMouseHWheel(ref m);
+                    break;
+            }
 
             base.WndProc(ref m);
         }
