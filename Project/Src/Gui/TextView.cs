@@ -1,4 +1,6 @@
-﻿// <file>
+﻿#nullable enable
+
+// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
@@ -19,7 +21,7 @@ namespace ICSharpCode.TextEditor
     /// </summary>
     public class TextView : AbstractMargin, IDisposable
     {
-        private Font lastFont;
+        private Font? lastFont;
 
         private int physicalColumn; // used for calculating physical column during paint
 
@@ -29,7 +31,7 @@ namespace ICSharpCode.TextEditor
             OptionsChanged();
         }
 
-        public Highlight Highlight { get; set; }
+        public Highlight? Highlight { get; set; }
 
         public int FirstPhysicalLine => textArea.VirtualTop.Y/FontHeight;
 
@@ -325,7 +327,7 @@ namespace ICSharpCode.TextEditor
         /// <param name="length">The length.</param>
         /// <param name="markers">All markers that have been found.</param>
         /// <returns>The Brush or null when no marker was found.</returns>
-        private static Brush GetMarkerBrush(IList<TextMarker> markers, ref Color foreColor)
+        private static Brush? GetMarkerBrush(IList<TextMarker> markers, ref Color foreColor)
         {
             foreach (var marker in markers)
                 if (marker.TextMarkerType == TextMarkerType.SolidBlock)
@@ -357,7 +359,7 @@ namespace ICSharpCode.TextEditor
 
             var currentWordOffset = 0; // we cannot use currentWord.Offset because it is not set on space words
 
-            TextWord nextCurrentWord = null;
+            TextWord? nextCurrentWord = null;
             var fontContainer = TextEditorProperties.FontContainer;
             for (var wordIdx = 0; wordIdx < currentLine.Words.Count; wordIdx++)
             {
@@ -576,11 +578,11 @@ namespace ICSharpCode.TextEditor
                 this.font = font;
             }
 
-            public override bool Equals(object obj)
+            public override bool Equals(object? obj)
             {
-                var myWordFontPair = (WordFontPair)obj;
-                if (!word.Equals(myWordFontPair.word)) return false;
-                return font.Equals(myWordFontPair.font);
+                return obj is WordFontPair other
+                    && word.Equals(other.word)
+                    && font.Equals(other.font);
             }
 
             public override int GetHashCode()
@@ -730,7 +732,7 @@ namespace ICSharpCode.TextEditor
         /// <summary>
         ///     returns line/column for a visual point position
         /// </summary>
-        public FoldMarker GetFoldMarkerFromPosition(int visualPosX, int visualPosY)
+        public FoldMarker? GetFoldMarkerFromPosition(int visualPosX, int visualPosY)
         {
             GetLogicalColumn(GetLogicalLine(visualPosY), visualPosX, out var foldMarker);
             return foldMarker;
@@ -745,7 +747,7 @@ namespace ICSharpCode.TextEditor
             return Document.GetFirstLogicalLine(clickedVisualLine);
         }
 
-        internal TextLocation GetLogicalColumn(int lineNumber, int visualPosX, out FoldMarker inFoldMarker)
+        internal TextLocation GetLogicalColumn(int lineNumber, int visualPosX, out FoldMarker? inFoldMarker)
         {
             visualPosX += textArea.VirtualTop.X;
 
@@ -768,13 +770,13 @@ namespace ICSharpCode.TextEditor
                 // GetLogicalColumnInternal or inside a fold marker.
                 while (true)
                 {
-                    var line = Document.GetLineSegment(lineNumber);
-                    var nextFolding = FindNextFoldedFoldingOnLineAfterColumn(lineNumber, start - 1);
-                    var end = nextFolding?.StartColumn ?? int.MaxValue;
+                    LineSegment line = Document.GetLineSegment(lineNumber);
+                    FoldMarker? nextFolding = FindNextFoldedFoldingOnLineAfterColumn(lineNumber, start - 1);
+                    int end = nextFolding?.StartColumn ?? int.MaxValue;
                     result = GetLogicalColumnInternal(g, line, start, end, ref posX, visualPosX);
 
                     // break when GetLogicalColumnInternal found the result column
-                    if (result < end)
+                    if (result < end || nextFolding is null)
                         break;
 
                     // reached fold marker
@@ -884,7 +886,7 @@ namespace ICSharpCode.TextEditor
             return Math.Abs(a - num) < Math.Abs(b - num);
         }
 
-        private FoldMarker FindNextFoldedFoldingOnLineAfterColumn(int lineNumber, int column)
+        private FoldMarker? FindNextFoldedFoldingOnLineAfterColumn(int lineNumber, int column)
         {
             var list = Document.FoldingManager.GetFoldedFoldingsWithStartAfterColumn(lineNumber, column);
             if (list.Count != 0)
@@ -973,7 +975,7 @@ namespace ICSharpCode.TextEditor
         {
             var foldings = Document.FoldingManager.GetTopLevelFoldedFoldings();
             int i;
-            FoldMarker f = null;
+            FoldMarker? f = null;
             // search the last folding that's interesting
             for (i = foldings.Count - 1; i >= 0; --i)
             {
