@@ -867,6 +867,72 @@ namespace ICSharpCode.TextEditor.Actions
         }
     }
 
+    public class MoveLineUp : AbstractEditAction
+    {
+        public override void Execute(TextArea textArea)
+        {
+            int caretInitialLine = textArea.Caret.Line;
+            int caretInitialColumn = textArea.Caret.Column;
+            if (MoveLine.TrySwitchLines(textArea, caretInitialLine - 1))
+            {
+                textArea.Caret.Position = new TextLocation(caretInitialColumn, caretInitialLine - 1);
+            }
+        }
+    }
+
+    public class MoveLineDown : AbstractEditAction
+    {
+        public override void Execute(TextArea textArea)
+        {
+            int caretInitialLine = textArea.Caret.Line;
+            int caretInitialColumn = textArea.Caret.Column;
+            if (MoveLine.TrySwitchLines(textArea, caretInitialLine))
+            {
+                textArea.Caret.Position = new TextLocation(caretInitialColumn, caretInitialLine + 1);
+            }
+        }
+    }
+
+    public static class MoveLine
+    {
+        public static bool TrySwitchLines(TextArea textArea, int firstLineIndex)
+        {
+            if (textArea.Document.ReadOnly
+                || firstLineIndex >= textArea.Document.TotalNumberOfLines - 1
+                || firstLineIndex < 0)
+            {
+                return false;
+            }
+
+            try
+            {
+                LineSegment firstLine = textArea.Document.GetLineSegment(firstLineIndex);
+                LineSegment secondLine = textArea.Document.GetLineSegment(firstLineIndex + 1);
+
+                string firstLineContent = textArea.Document.GetText(firstLine.Offset, firstLine.TotalLength);
+                string secondLineContent = textArea.Document.GetText(secondLine.Offset, secondLine.TotalLength);
+
+                // Handling of special case where last line that could have no eol char (that is taken from 1st line)
+                string newContent = secondLine.DelimiterLength != 0
+                    ? secondLineContent + firstLineContent
+                    : secondLineContent
+                        + firstLineContent.Substring(firstLineContent.Length - firstLine.DelimiterLength)
+                        + firstLineContent.Substring(0, firstLineContent.Length - firstLine.DelimiterLength);
+                textArea.Document.Replace(firstLine.Offset, firstLine.TotalLength + secondLine.TotalLength, newContent);
+
+                textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.PositionToEnd, new TextLocation(column: 0, firstLineIndex)));
+                textArea.UpdateMatchingBracket();
+                textArea.Document.CommitUpdate();
+                return true;
+            }
+            catch (Exception)
+            {
+                // We don't want to crash for a non-essential feature...
+                return false;
+            }
+        }
+    }
+
     public class DeleteToLineEnd : AbstractEditAction
     {
         public override void Execute(TextArea textArea)

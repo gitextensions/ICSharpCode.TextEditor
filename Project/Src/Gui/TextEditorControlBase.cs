@@ -208,9 +208,11 @@ namespace ICSharpCode.TextEditor
             editactions[Keys.Up] = new CaretUp();
             editactions[Keys.Up | Keys.Shift] = new ShiftCaretUp();
             editactions[Keys.Up | Keys.Control] = new ScrollLineUp();
+            editactions[Keys.Up | Keys.Alt] = new MoveLineUp();
             editactions[Keys.Down] = new CaretDown();
             editactions[Keys.Down | Keys.Shift] = new ShiftCaretDown();
             editactions[Keys.Down | Keys.Control] = new ScrollLineDown();
+            editactions[Keys.Down | Keys.Alt] = new MoveLineDown();
 
             editactions[Keys.Insert] = new ToggleEditMode();
             editactions[Keys.Insert | Keys.Control] = new Copy();
