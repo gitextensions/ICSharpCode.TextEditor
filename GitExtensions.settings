@@ -21,7 +21,7 @@
       <string>BuildServer.AppVeyor.AppVeyorProjectName</string>
     </key>
     <value>
-      <string>drewnoakes/icsharpcode-texteditor</string>
+      <string>gitextensions/icsharpcode-texteditor</string>
     </value>
   </item>
   <item>
