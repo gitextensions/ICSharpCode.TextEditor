@@ -8,6 +8,8 @@ Version 1.3
 
 HazelDev@outlook.com
 https://github.com/ei
+
+For syntax help, see Mode.xsd file
 -->
 
 <SyntaxDefinition name="C#" extensions=".cs">
@@ -75,52 +77,68 @@ https://github.com/ei
             <Span name="Preprocessor" rule="PreprocessorSet" stopateol="true" color="#808080" bold="false" italic="false">
                 <Begin>#</Begin>
             </Span>
-            
-            <MarkFollowing color="Black" bold="false" italic="true">class</MarkFollowing>
-            <MarkFollowing color="Black" bold="false" italic="true">interface</MarkFollowing>
-            <MarkFollowing color="Black" bold="false" italic="true">struct</MarkFollowing>
-            
-            <KeyWords name="Keywords1" color="Blue" bold="false" italic="false">
+
+            <!--Method definition and calls-->
+            <MarkPrevious color="#74531f" bold="false" italic="false">(</MarkPrevious>
+
+            <!--Highlight type declaration-->
+            <MarkFollowing color="#163F38" bold="false" italic="true">class</MarkFollowing>
+            <MarkFollowing color="#163F38" bold="false" italic="true">interface</MarkFollowing>
+            <MarkFollowing color="#163F38" bold="false" italic="true">struct</MarkFollowing>
+            <MarkFollowing color="#163F38" bold="false" italic="true">record</MarkFollowing>
+            <MarkFollowing color="#163F38" bold="false" italic="true">enum</MarkFollowing>
+
+            <!-- https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/ -->
+            <KeyWords name="Keywords" color="Blue" bold="false" italic="false">
                 <Key word="abstract"/>
                 <Key word="add"/>
+                <Key word="alias"/>
+                <Key word="and"/>
+                <Key word="args"/>
                 <Key word="as"/>
+                <Key word="ascending"/>
                 <Key word="async"/>
                 <Key word="await"/>
                 <Key word="base"/>
-                <Key word="break"/>
-                <Key word="case"/>
-                <Key word="catch"/>
+                <Key word="by"/>
                 <Key word="checked"/>
-                <Key word="class"/>
                 <Key word="const"/>
-                <Key word="continue"/>
                 <Key word="default"/>
                 <Key word="delegate"/>
-                <Key word="do"/>
-                <Key word="else"/>
+                <Key word="descending"/>
+                <Key word="dynamic"/>
+                <Key word="equals"/>
                 <Key word="event"/>
                 <Key word="explicit"/>
                 <Key word="extern"/>
                 <Key word="false"/>
-                <Key word="finally"/>
+                <Key word="file"/>
                 <Key word="fixed"/>
-                <Key word="for"/>
-                <Key word="foreach"/>
+                <Key word="from"/>
                 <Key word="get"/>
                 <Key word="global"/>
-                <Key word="goto"/>
-                <Key word="if"/>
+                <Key word="group"/>
                 <Key word="implicit"/>
-                <Key word="in"/>
+                <Key word="init"/>
                 <Key word="interface"/>
                 <Key word="internal"/>
+                <Key word="into"/>
                 <Key word="is"/>
+                <Key word="join"/>
+                <Key word="let"/>
                 <Key word="lock"/>
+                <Key word="managed"/>
+                <Key word="nameof"/>
                 <Key word="namespace"/>
                 <Key word="new"/>
+                <Key word="not"/>
+                <Key word="notnull"/>
                 <Key word="null"/>
                 <Key word="object"/>
+                <Key word="on"/>
                 <Key word="operator"/>
+                <Key word="or"/>
+                <Key word="orderby"/>
                 <Key word="out"/>
                 <Key word="override"/>
                 <Key word="params"/>
@@ -131,40 +149,68 @@ https://github.com/ei
                 <Key word="readonly"/>
                 <Key word="ref"/>
                 <Key word="remove"/>
-                <Key word="return"/>
+                <Key word="required"/>
+                <Key word="scoped"/>
                 <Key word="sealed"/>
+                <Key word="select"/>
                 <Key word="set"/>
                 <Key word="sizeof"/>
                 <Key word="stackalloc"/>
                 <Key word="static"/>
-                <Key word="switch"/>
                 <Key word="this"/>
-                <Key word="throw"/>
                 <Key word="true"/>
-                <Key word="try"/>
                 <Key word="typeof"/>
                 <Key word="unchecked"/>
+                <Key word="unmanaged"/>
                 <Key word="unsafe"/>
                 <Key word="using"/>
+                <Key word="value"/>
                 <Key word="var"/>
                 <Key word="virtual"/>
                 <Key word="void"/>
                 <Key word="volatile"/>
+                <Key word="when"/>
                 <Key word="where"/>
+                <Key word="with"/>
+            </KeyWords>
+
+            <!--https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/statement-keywords-->
+            <KeyWords name="StatementKeywords" color="DarkViolet" bold="false" italic="false">
+                <Key word="break"/>
+                <Key word="catch"/>
+                <Key word="case"/>
+                <Key word="continue"/>
+                <Key word="do"/>
+                <Key word="else"/>
+                <Key word="finally"/>
+                <Key word="for"/>
+                <Key word="foreach"/>
+                <Key word="goto"/>
+                <Key word="if"/>
+                <Key word="in"/>
+                <Key word="return"/>
+                <Key word="switch"/>
+                <Key word="throw"/>
+                <Key word="try"/>
                 <Key word="while"/>
                 <Key word="yield"/>
             </KeyWords>
-            
-            <KeyWords name="Keywords2" color="DarkViolet" bold="false" italic="false">
+
+            <KeyWords name="TypesKeywords" color="#2d7c6d" bold="false" italic="false">
                 <Key word="bool"/>
                 <Key word="byte"/>
                 <Key word="char"/>
+                <Key word="class"/>
                 <Key word="decimal"/>
                 <Key word="double"/>
                 <Key word="enum"/>
                 <Key word="float"/>
                 <Key word="int"/>
+                <Key word="interface"/>
                 <Key word="long"/>
+                <Key word="nint"/>
+                <Key word="nuint"/>
+                <Key word="record"/>
                 <Key word="sbyte"/>
                 <Key word="short"/>
                 <Key word="string"/>
@@ -232,7 +278,7 @@ https://github.com/ei
             <Span name="Char" stopateol="true" color="Black" bold="false" italic="false">
                 <Begin color="#808080">&apos;</Begin>
                 <End color="#808080">&apos;</End>
-            </Span>     
+            </Span>
         </RuleSet>
     </RuleSets>
 </SyntaxDefinition>
