@@ -79,10 +79,11 @@
                 <End>__</End>
             </Span>
 
-            <Span name="Italic1" color="Black" italic="true" stopateol="true">
+            <!-- Disabled because underscore in texts is interpreted as italics -->
+            <!-- <Span name="Italic1" color="Black" italic="true" stopateol="true">
                 <Begin>_</Begin>
                 <End>_</End>
-            </Span>
+            </Span> -->
 
             <!-- Disabled because conflicts with unordered list items -->
             <!-- <Span name="Italic2" color="Black" italic="true" stopateol="true">
