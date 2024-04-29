@@ -81,6 +81,7 @@ https://github.com/ei
                 <Key word="and"/>
                 <Key word="as"/>
                 <Key word="assert"/>
+                <Key word="base"/>
                 <Key word="begin"/>
                 <Key word="class"/>
                 <Key word="default"/>
@@ -89,6 +90,7 @@ https://github.com/ei
                 <Key word="done"/>
                 <Key word="downcast"/>
                 <Key word="downto"/>
+                <Key word="elif"/>  
                 <Key word="else"/>
                 <Key word="end"/>
                 <Key word="enum"/>
@@ -99,27 +101,33 @@ https://github.com/ei
                 <Key word="for"/>
                 <Key word="fun"/>
                 <Key word="function"/>
+                <Key word="global"/>
                 <Key word="if"/>
                 <Key word="in"/>
                 <Key word="inherit"/>
                 <Key word="inline"/>
                 <Key word="interface"/>
+                <Key word="internal"/>
                 <Key word="land"/>
                 <Key word="lazy"/>
                 <Key word="let"/>
                 <Key word="match"/>
                 <Key word="member"/>
                 <Key word="module"/>
+                <Key word="mod"/>
                 <Key word="mutable"/>
                 <Key word="namespace"/>
                 <Key word="new"/>
+                <Key word="not"/>
                 <Key word="null"/>
                 <Key word="of"/>
                 <Key word="open"/>
                 <Key word="or"/>
                 <Key word="override"/>
+                <Key word="private"/>
                 <Key word="rec"/>
                 <Key word="return"/>
+                <Key word="select"/>
                 <Key word="seq"/>
                 <Key word="sig"/>
                 <Key word="static"/>
@@ -134,6 +142,7 @@ https://github.com/ei
                 <Key word="val"/>
                 <Key word="void"/>
                 <Key word="when"/>
+                <Key word="where"/>
                 <Key word="while"/>
                 <Key word="with"/>
                 <Key word="yield"/>
@@ -141,6 +150,7 @@ https://github.com/ei
           
             <KeyWords name="Keywords2" color="DarkViolet" bold="false" italic="false">
                 <Key word="async"/>
+                <Key word="task"/>
                 <Key word="atomic"/>
                 <Key word="break"/>
                 <Key word="checked"/>
@@ -164,10 +174,61 @@ https://github.com/ei
                 <Key word="protected"/>
                 <Key word="public"/>
                 <Key word="pure"/>
+                <Key word="query"/>
                 <Key word="readonly"/>
                 <Key word="sealed"/>
                 <Key word="virtual"/>
                 <Key word="volatile"/>
+            </KeyWords>
+
+            <KeyWords name="TypesKeywords" color="#008b8b" bold="false" italic="false">
+              <Key word="bool"/>
+              <Key word="byte"/>
+              <Key word="char"/>
+              <Key word="decimal"/>
+              <Key word="double"/>
+              <Key word="float"/>
+              <Key word="float32"/>
+              <Key word="int"/>
+              <Key word="int16"/>
+              <Key word="int64"/>
+              <Key word="nativeint"/>
+              <Key word="sbyte"/>
+              <Key word="single"/>
+              <Key word="string"/>
+              <Key word="struct"/>
+              <Key word="uint"/>
+              <Key word="uint16"/>
+              <Key word="uint64"/>
+              <Key word="unit"/>
+              <Key word="unativeint"/>
+              <Key word="Array"/>
+              <Key word="Async"/>
+              <Key word="Char"/>
+              <Key word="DateTime"/>
+              <Key word="Decimal"/>
+              <Key word="Guid"/>
+              <Key word="Int16"/>
+              <Key word="Int32"/>
+              <Key word="Int64"/>
+              <Key word="IntPtr"/>
+              <Key word="List"/>
+              <Key word="Map"/>
+              <Key word="None"/>
+              <Key word="Option"/>
+              <Key word="Seq"/>
+              <Key word="Some"/>
+              <Key word="String"/>
+              <Key word="Task"/>
+              <Key word="Type"/>
+              <Key word="UInt16"/>
+              <Key word="UInt32"/>
+              <Key word="UInt64"/>
+              <Key word="UIntPtr"/>
+              <Key word="Unit"/>
+              <Key word="ValueNone"/>
+              <Key word="ValueOption"/>
+              <Key word="ValueSome"/>
             </KeyWords>
         </RuleSet>
         
