@@ -14,7 +14,8 @@ namespace ICSharpCode.TextEditor.Document
     {
         SolidBlock,
         Underlined,
-        WaveLine
+        WaveLine,
+        InterChar
     }
 
     /// <summary>

@@ -291,28 +291,39 @@ namespace ICSharpCode.TextEditor
 
         private void DrawMarkerDraw(Graphics g)
         {
-            foreach (var m in markersToDraw)
+            foreach (MarkerToDraw m in markersToDraw)
             {
-                var marker = m.marker;
-                var drawingRect = m.drawingRect;
-                var drawYPos = drawingRect.Bottom - 1;
+                TextMarker marker = m.marker;
+                RectangleF drawingRect = m.drawingRect;
+
+                if (marker.TextMarkerType == TextMarkerType.SolidBlock)
+                {
+                    g.FillRectangle(BrushRegistry.GetBrush(marker.Color), drawingRect);
+                    continue;
+                }
+
+                float drawYPos = drawingRect.Bottom - 1;
+                Pen pen = BrushRegistry.GetPen(marker.Color);
                 switch (marker.TextMarkerType)
                 {
                     case TextMarkerType.Underlined:
-                        g.DrawLine(BrushRegistry.GetPen(marker.Color), drawingRect.X, drawYPos, drawingRect.Right, drawYPos);
+                        g.DrawLine(pen, drawingRect.X, drawYPos, drawingRect.Right, drawYPos);
                         break;
                     case TextMarkerType.WaveLine:
-                        var reminder = (int)drawingRect.X%6;
+                        int reminder = (int)drawingRect.X % 6;
                         for (float i = (int)drawingRect.X - reminder; i < drawingRect.Right; i += 6)
                         {
-                            g.DrawLine(BrushRegistry.GetPen(marker.Color), i, drawYPos + 3 - 4, i + 3, drawYPos + 1 - 4);
+                            g.DrawLine(pen, i, drawYPos + 3 - 4, i + 3, drawYPos + 1 - 4);
                             if (i + 3 < drawingRect.Right)
-                                g.DrawLine(BrushRegistry.GetPen(marker.Color), i + 3, drawYPos + 1 - 4, i + 6, drawYPos + 3 - 4);
+                                g.DrawLine(pen, i + 3, drawYPos + 1 - 4, i + 6, drawYPos + 3 - 4);
                         }
 
                         break;
-                    case TextMarkerType.SolidBlock:
-                        g.FillRectangle(BrushRegistry.GetBrush(marker.Color), drawingRect);
+                    case TextMarkerType.InterChar:
+                        int baseWidth = (int)(drawingRect.Width * 0.5f);
+                        int height = (int)(drawingRect.Height * 0.25f);
+                        g.DrawLine(pen, drawingRect.X - baseWidth, drawYPos, drawingRect.X + baseWidth, drawYPos);
+                        g.DrawLine(pen, drawingRect.X, drawYPos - height, drawingRect.X, drawYPos);
                         break;
                 }
             }
