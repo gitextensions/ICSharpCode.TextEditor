@@ -34,6 +34,12 @@ namespace ICSharpCode.TextEditor.Document
             textMarker.Add(item);
         }
 
+        public void AddMarker(IList<TextMarker> items)
+        {
+            markersTable.Clear();
+            textMarker.AddRange(items);
+        }
+
         public void InsertMarker(int index, TextMarker item)
         {
             markersTable.Clear();
