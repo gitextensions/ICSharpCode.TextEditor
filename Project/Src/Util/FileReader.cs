@@ -16,6 +16,8 @@ namespace ICSharpCode.TextEditor.Util
     /// </summary>
     public static class FileReader
     {
+        public static readonly UTF8Encoding Utf8WithoutBom = new(encoderShouldEmitUTF8Identifier: false);
+
         public static bool IsUnicode(Encoding encoding)
         {
             var codepage = encoding.CodePage;
@@ -159,7 +161,7 @@ namespace ICSharpCode.TextEditor.Util
                         defaultEncoding = Encoding.Default; // use system encoding instead
                     return new StreamReader(fs, defaultEncoding);
                 default:
-                    return new StreamReader(fs);
+                    return new StreamReader(fs, Utf8WithoutBom);
             }
         }
     }
