@@ -20,14 +20,14 @@ namespace ICSharpCode.TextEditor.Util
 
         public static bool IsUnicode(Encoding encoding)
         {
-            var codepage = encoding.CodePage;
+            int codepage = encoding.CodePage;
             // return true if codepage is any UTF codepage
             return codepage == 65001 || codepage == 65000 || codepage == 1200 || codepage == 1201;
         }
 
         public static string ReadFileContent(Stream fs, ref Encoding encoding)
         {
-            using (var reader = OpenStream(fs, encoding))
+            using (StreamReader reader = OpenStream(fs, encoding))
             {
                 reader.Peek();
                 encoding = reader.CurrentEncoding;
@@ -37,7 +37,7 @@ namespace ICSharpCode.TextEditor.Util
 
         public static string ReadFileContent(string fileName, Encoding encoding)
         {
-            using (var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 return ReadFileContent(fs, ref encoding);
             }
@@ -52,8 +52,8 @@ namespace ICSharpCode.TextEditor.Util
             {
                 // the autodetection of StreamReader is not capable of detecting the difference
                 // between ISO-8859-1 and UTF-8 without BOM.
-                var firstByte = fs.ReadByte();
-                var secondByte = fs.ReadByte();
+                int firstByte = fs.ReadByte();
+                int secondByte = fs.ReadByte();
                 switch ((firstByte << 8) | secondByte)
                 {
                     case 0x0000: // either UTF-32 Big Endian or a binary file; use StreamReader
@@ -76,14 +76,14 @@ namespace ICSharpCode.TextEditor.Util
 
         private static StreamReader AutoDetect(Stream fs, byte firstByte, byte secondByte, Encoding defaultEncoding)
         {
-            var max = (int)Math.Min(fs.Length, val2: 500000); // look at max. 500 KB
+            int max = (int)Math.Min(fs.Length, val2: 500000); // look at max. 500 KB
             const int ASCII = 0;
             const int Error = 1;
             const int UTF8 = 2;
             const int UTF8Sequence = 3;
-            var state = ASCII;
-            var sequenceLength = 0;
-            for (var i = 0; i < max; i++)
+            int state = ASCII;
+            int sequenceLength = 0;
+            for (int i = 0; i < max; i++)
             {
                 byte b;
                 if (i == 0)
