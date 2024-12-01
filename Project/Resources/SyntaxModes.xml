@@ -114,6 +114,10 @@
         name="Fortran 95"
         extensions=".f90;.f95;.f03" />
 
+  <Mode file="GherkinFeature.xshd"
+        name="GherkinFeature"
+        extensions=".feature" />
+
   <Mode file="Go.xshd"
         name="Go"
         extensions=".go" />
