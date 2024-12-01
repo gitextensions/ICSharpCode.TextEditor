@@ -10,7 +10,7 @@ hello@exr.be
 https://github.com/ei
 -->
 
-<SyntaxDefinition name="INI" extensions=".ini;.inf;.wer;.dof">
+<SyntaxDefinition name="INI" extensions=".ini;.inf;.wer;.dof;.editorconfig">
 
     <Environment> 
         <Default color="Black" bgcolor="#FFFFFF"/>
@@ -38,7 +38,7 @@ https://github.com/ei
     <RuleSets>
         <RuleSet ignorecase="false">
         
-        <Delimiters>&amp;|\/"',;=:-</Delimiters>
+            <Delimiters>&amp;|\/"',;=:-</Delimiters>
         
             <Span name="LineComment1" stopateol="true" color="Green" bold="false" italic="false">
                 <Begin>;</Begin>

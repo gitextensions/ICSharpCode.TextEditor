@@ -152,7 +152,7 @@
 
   <Mode file="INI.xshd"
         name="INI"
-        extensions=".ini;.inf;.wer;.dof" />
+        extensions=".ini;.inf;.wer;.dof;.editorconfig" />
 
   <Mode file="Io.xshd"
         name="Io"
