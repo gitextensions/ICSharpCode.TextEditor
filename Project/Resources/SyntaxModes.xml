@@ -361,5 +361,9 @@
   <Mode file="Xtend.xshd"
         name="Xtend"
         extensions=".xtend" />
+  
+  <Mode file="Yaml.xshd"
+        name="YAML"
+        extensions=".yaml;.yml" />
 
 </SyntaxModes>

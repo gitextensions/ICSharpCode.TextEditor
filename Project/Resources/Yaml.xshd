@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<SyntaxDefinition xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008"
+                  name="YAML" extensions=".yaml,.yml">
+
+    <RuleSet ignorecase="true">
+        <Delimiters>&amp;|\/"',;=:- $()</Delimiters>
+
+        <KeyWords name="Keywords" color="Purple" bold="false" italic="false">
+            <Key word="true"/>
+            <Key word="false"/>
+            <Key word="null"/>
+        </KeyWords>
+
+        <Span name="Comments" color="Green" stopateol="true" >
+            <Begin>#</Begin>
+        </Span>
+
+        <Span name="DocumentStart" color="LightGreen" stopateol="true" >
+            <Begin>---</Begin>
+        </Span>
+
+        <Span name="Tag" color="Red" stopateol="true" >
+            <Begin startofline="true">%</Begin>
+        </Span>
+        
+        <Span name="String" stopateol="true" color="Maroon" bold="false" italic="false" escapecharacter="\">
+            <Begin>"</Begin>
+            <End>"</End>
+        </Span>
+
+        <Span name="Char" stopateol="true" color="Maroon" bold="false" italic="false" escapecharacter="\">
+            <Begin>'</Begin>
+            <End>'</End>
+        </Span>
+
+        <MarkPrevious name="key" color="Blue" bold="false" italic="false">:</MarkPrevious>
+    </RuleSet>
+</SyntaxDefinition>
