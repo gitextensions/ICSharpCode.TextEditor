@@ -49,20 +49,19 @@ namespace ICSharpCode.TextEditor.Document
             environmentColors = new Dictionary<string, HighlightColor>
             {
                 ["Default"] = new HighlightBackground(nameof(SystemColors.WindowText), nameof(SystemColors.Window), bold: false, italic: false),
-                ["Selection"] = new HighlightColor(nameof(SystemColors.HighlightText), nameof(SystemColors.Highlight), bold: false, italic: false),
+                ["Selection"] = new HighlightColor(SystemColors.HighlightText, Color.FromArgb(0xc3, 0xc3, 0xff), bold: false, italic: false),
                 ["VRuler"] = new HighlightColor(nameof(SystemColors.ControlLight), nameof(SystemColors.Window), bold: false, italic: false),
-                ["InvalidLines"] = new HighlightColor(Color.Red, bold: false, italic: false),
-                ["CaretMarker"] = new HighlightColor(Color.Yellow, bold: false, italic: false),
+                ["InvalidLines"] = new HighlightColor(Color.FromArgb(0xB6, 0xB6, 0xC0), bold: false, italic: false),
+                ["CaretMarker"] = new HighlightColor(nameof(SystemColors.MenuBar), bold: false, italic: false),
                 ["CaretLine"] = new HighlightBackground(nameof(SystemColors.ControlLight), nameof(SystemColors.Window), bold: false, italic: false),
                 ["LineNumbers"] = new HighlightBackground(nameof(SystemColors.GrayText), nameof(SystemColors.Window), bold: false, italic: false),
                 ["FoldLine"] = new HighlightColor(nameof(SystemColors.ControlDark), bold: false, italic: false),
                 ["FoldMarker"] = new HighlightColor(nameof(SystemColors.WindowText), nameof(SystemColors.Window), bold: false, italic: false),
                 ["SelectedFoldLine"] = new HighlightColor(nameof(SystemColors.WindowText), bold: false, italic: false),
-                ["EOLMarkers"] = new HighlightColor(nameof(SystemColors.ControlLight), nameof(SystemColors.Window), bold: false, italic: false),
-                ["SpaceMarkers"] = new HighlightColor(nameof(SystemColors.ControlLight), nameof(SystemColors.Window), bold: false, italic: false),
-                ["TabMarkers"] = new HighlightColor(nameof(SystemColors.ControlLight), nameof(SystemColors.Window), bold: false, italic: false)
+                ["EOLMarkers"] = new HighlightColor(Color.FromArgb(0xca, 0xca, 0xd2), bold: false, italic: false),
+                ["SpaceMarkers"] = new HighlightColor(Color.FromArgb(0xB6, 0xB6, 0xC0), bold: false, italic: false),
+                ["TabMarkers"] = new HighlightColor(Color.FromArgb(0xB6, 0xB6, 0xC0), bold: false, italic: false)
             };
-
         }
 
         public HighlightColor DigitColor { get; set; }
