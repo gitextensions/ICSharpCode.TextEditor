@@ -1,0 +1,11 @@
+; Visual Studio Extension : http://visualstudiogallery.msdn.microsoft.com/c8bccfe2-650c-4b42-bc5c-845e21f96328
+; See http://editorconfig.org/ for more informations
+; Top-most EditorConfig file
+root = false
+
+# Additions for AppVeyor tests, use Git Extensions settings by default
+
+[*.cs]
+# WFO1000: A property should determine its property content serialization with the DesignerSerializationVisibilityAttribute, DefaultValueAttribute or the ShouldSerializeProperty method
+# Silent for now, see https://github.com/dotnet/winforms/issues/12476
+dotnet_diagnostic.WFO1000.severity = silent
