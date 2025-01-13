@@ -49,7 +49,7 @@ namespace ICSharpCode.TextEditor.Document
             environmentColors = new Dictionary<string, HighlightColor>
             {
                 ["Default"] = new HighlightBackground(nameof(SystemColors.WindowText), nameof(SystemColors.Window), bold: false, italic: false),
-                ["Selection"] = new HighlightColor(SystemColors.HighlightText, Color.FromArgb(0xc3, 0xc3, 0xff), bold: false, italic: false),
+                ["Selection"] = new HighlightColor(SystemColors.WindowText, Color.FromArgb(0xc3, 0xc3, 0xff), bold: false, italic: false),
                 ["VRuler"] = new HighlightColor(nameof(SystemColors.ControlLight), nameof(SystemColors.Window), bold: false, italic: false),
                 ["InvalidLines"] = new HighlightColor(Color.FromArgb(0xB6, 0xB6, 0xC0), bold: false, italic: false),
                 ["CaretMarker"] = new HighlightColor(nameof(SystemColors.MenuBar), bold: false, italic: false),
