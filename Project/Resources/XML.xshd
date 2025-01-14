@@ -11,22 +11,7 @@ https://github.com/ei
 -->
 
 <SyntaxDefinition name="XML" extensions=".xml;.xsl;.xslt;.xhtml;.xsd;.syn;.lang;.manifest;.config;.addin;.xshd;.wxs;.wxi;.wxl;.proj;.csproj;.vbproj;.vcproj;.vcxproj;.vcxproj.filters;.resx;.user;.ilproj;.booproj;.build;.xfrm;.targets;.props;.xaml;.xpt;.xft;.map;.wsdl;.disco;.ruleset;.settings;.DotSettings;.cd;.svg;.xlf;.fodp;.fods;.fodt;.arxml">
-    <Environment> 
-        <Default color="Black" bgcolor="#FFFFFF"/>
-        <Selection color="Black" bgcolor="#C3C3FF"/>
-        <LineNumbers color="Gray" bgcolor="#FFFFFF"/>
-        <CaretMarker color="#F0F0F1"/>
-        <VRuler color="#E0E0E5"/>
-        
-        <FoldLine color="#A0A0A0" bgcolor="#FFFFFF"/>
-        <FoldMarker color="Black" bgcolor="#FFFFFF"/>
-        <SelectedFoldLine color="Black" bgcolor="#FFFFFF"/>
-        
-        <EOLMarkers color="#CACAD2"/>
-        <SpaceMarkers color="#B6B6C0"/>
-        <TabMarkers color="#B6B6C0"/>
-        <InvalidLines color="#B6B6C0"/>
-    </Environment>
+    <Environment/>
     
     <Properties>
         <Property name="BlockCommentBegin" value="&lt;!--"/>
