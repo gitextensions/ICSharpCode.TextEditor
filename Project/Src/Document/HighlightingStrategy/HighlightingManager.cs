@@ -74,7 +74,7 @@ namespace ICSharpCode.TextEditor.Document
 
         private void CreateDefaultHighlightingStrategy()
         {
-            var defaultHighlightingStrategy = new DefaultHighlightingStrategy();
+            var defaultHighlightingStrategy = DefaultHighlightingStrategy.DefaultEnvironment;
             defaultHighlightingStrategy.Extensions = new string[] { };
             defaultHighlightingStrategy.Rules.Add(new HighlightRuleSet());
             HighlightingDefinitions["Default"] = defaultHighlightingStrategy;

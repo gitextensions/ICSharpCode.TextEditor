@@ -117,6 +117,7 @@ namespace ICSharpCode.TextEditor.Document
             Italic = original.Italic;
             HasForeground = original.HasForeground;
             HasBackground = original.HasBackground;
+            Adaptable = original.Adaptable;
             Color = color;
             BackgroundColor = backColor;
         }
@@ -124,18 +125,19 @@ namespace ICSharpCode.TextEditor.Document
         /// <summary>
         ///     Creates a new instance of <see cref="HighlightColor" />
         /// </summary>
-        public HighlightColor(Color color, bool bold, bool italic)
+        public HighlightColor(Color color, bool bold, bool italic, bool adaptable = true)
         {
             HasForeground = true;
             Color = color;
             Bold = bold;
             Italic = italic;
+            Adaptable = adaptable;
         }
 
         /// <summary>
         ///     Creates a new instance of <see cref="HighlightColor" />
         /// </summary>
-        public HighlightColor(Color color, Color backgroundcolor, bool bold, bool italic)
+        public HighlightColor(Color color, Color backgroundcolor, bool bold, bool italic, bool adaptable = true)
         {
             HasForeground = true;
             HasBackground = true;
@@ -143,6 +145,7 @@ namespace ICSharpCode.TextEditor.Document
             BackgroundColor = backgroundcolor;
             Bold = bold;
             Italic = italic;
+            Adaptable = adaptable;
         }
 
         /// <summary>
@@ -158,6 +161,7 @@ namespace ICSharpCode.TextEditor.Document
 
             Bold = bold;
             Italic = italic;
+            Adaptable = false;
         }
 
         /// <summary>
@@ -171,6 +175,7 @@ namespace ICSharpCode.TextEditor.Document
 
             Bold = bold;
             Italic = italic;
+            Adaptable = false;
         }
 
         public bool HasForeground { get; }
@@ -196,6 +201,11 @@ namespace ICSharpCode.TextEditor.Document
         ///     The foreground color used
         /// </value>
         public Color Color { get; }
+
+        /// <value>
+        ///     If the color should be adpted to the theme or if it is absolute
+        /// </value>
+        public bool Adaptable { get; } = true;
 
         /// <value>
         ///     The font used

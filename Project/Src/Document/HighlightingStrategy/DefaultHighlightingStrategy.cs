@@ -34,22 +34,31 @@ namespace ICSharpCode.TextEditor.Document
         // Span state variables
         protected bool inSpan;
 
-        public DefaultHighlightingStrategy() : this("Default")
-        {
-        }
+        // Default environment, can be overridden
+        public static readonly DefaultHighlightingStrategy DefaultEnvironment = new();
 
         public DefaultHighlightingStrategy(string name)
         {
             Name = name;
 
-            DigitColor = new HighlightColor(SystemColors.WindowText, bold: false, italic: false);
-            DefaultTextColor = new HighlightColor(SystemColors.WindowText, bold: false, italic: false);
+            environmentColors = DefaultEnvironment.environmentColors;
+            DigitColor = DefaultEnvironment.DigitColor;
+            DefaultTextColor = DefaultEnvironment.DefaultTextColor;
+        }
+
+        private DefaultHighlightingStrategy() {}
+
+        static DefaultHighlightingStrategy()
+        {
+            DefaultEnvironment.DigitColor = new HighlightColor(nameof(SystemColors.WindowText), bold: false, italic: false);
+            DefaultEnvironment.DefaultTextColor = new HighlightColor(nameof(SystemColors.WindowText), bold: false, italic: false);
 
             // set small 'default color environment'
-            environmentColors = new Dictionary<string, HighlightColor>
+            // colors that are not system colors will be adapted to the theme
+            DefaultEnvironment.environmentColors = new Dictionary<string, HighlightColor>
             {
                 ["Default"] = new HighlightBackground(nameof(SystemColors.WindowText), nameof(SystemColors.Window), bold: false, italic: false),
-                ["Selection"] = new HighlightColor(SystemColors.WindowText, Color.FromArgb(0xc3, 0xc3, 0xff), bold: false, italic: false),
+                ["Selection"] = new HighlightColor(SystemColors.WindowText, Color.FromArgb(0xc3, 0xc3, 0xff), bold: false, italic: false, adaptable: true),
                 ["VRuler"] = new HighlightColor(nameof(SystemColors.ControlLight), nameof(SystemColors.Window), bold: false, italic: false),
                 ["InvalidLines"] = new HighlightColor(Color.FromArgb(0xB6, 0xB6, 0xC0), bold: false, italic: false),
                 ["CaretMarker"] = new HighlightColor(nameof(SystemColors.MenuBar), bold: false, italic: false),
@@ -284,7 +293,7 @@ namespace ICSharpCode.TextEditor.Document
         public void SetColorFor(string name, HighlightColor color)
         {
             if (name == "Default")
-                DefaultTextColor = new HighlightColor(color.Color, color.Bold, color.Italic);
+                DefaultTextColor = new HighlightColor(color.Color, color.Bold, color.Italic, adaptable: color.Adaptable);
             environmentColors[name] = color;
         }
 
