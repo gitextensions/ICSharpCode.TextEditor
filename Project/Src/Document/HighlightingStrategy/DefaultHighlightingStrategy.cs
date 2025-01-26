@@ -35,27 +35,28 @@ namespace ICSharpCode.TextEditor.Document
         protected bool inSpan;
 
         // Default environment, can be overridden
-        public static readonly DefaultHighlightingStrategy DefaultEnvironment = new();
+        public static readonly DefaultHighlightingStrategy Default = new();
 
         public DefaultHighlightingStrategy(string name)
         {
             Name = name;
 
-            environmentColors = DefaultEnvironment.environmentColors;
-            DigitColor = DefaultEnvironment.DigitColor;
-            DefaultTextColor = DefaultEnvironment.DefaultTextColor;
+            environmentColors = Default.environmentColors;
+            DigitColor = Default.DigitColor;
+            DefaultTextColor = Default.DefaultTextColor;
         }
 
         private DefaultHighlightingStrategy() {}
 
         static DefaultHighlightingStrategy()
         {
-            DefaultEnvironment.DigitColor = new HighlightColor(nameof(SystemColors.WindowText), bold: false, italic: false);
-            DefaultEnvironment.DefaultTextColor = new HighlightColor(nameof(SystemColors.WindowText), bold: false, italic: false);
+            Default.Name = "Default";
+            Default.DigitColor = new HighlightColor(nameof(SystemColors.WindowText), bold: false, italic: false);
+            Default.DefaultTextColor = new HighlightColor(nameof(SystemColors.WindowText), bold: false, italic: false);
 
             // set small 'default color environment'
             // colors that are not system colors will be adapted to the theme
-            DefaultEnvironment.environmentColors = new Dictionary<string, HighlightColor>
+            Default.environmentColors = new Dictionary<string, HighlightColor>
             {
                 ["Default"] = new HighlightBackground(nameof(SystemColors.WindowText), nameof(SystemColors.Window), bold: false, italic: false),
                 ["Selection"] = new HighlightColor(SystemColors.WindowText, Color.FromArgb(0xc3, 0xc3, 0xff), bold: false, italic: false, adaptable: true),
