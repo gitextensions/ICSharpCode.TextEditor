@@ -74,7 +74,7 @@ namespace ICSharpCode.TextEditor.Document
                 }
             }
 
-            return new HighlightColor(SystemColors.WindowText, bold: false, italic: false);
+            return new HighlightColor(nameof(SystemColors.WindowText), bold: false, italic: false);
         }
 
         /// <summary>
