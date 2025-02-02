@@ -37,6 +37,12 @@ namespace ICSharpCode.TextEditor
         /// </summary>
         protected Dictionary<Keys, IEditAction> editactions = new Dictionary<Keys, IEditAction>();
 
+        /// <summary>
+        ///    Key combinations for actions only available in read-only mode.
+        ///    In read-write these keys are ignored.
+        /// </summary>
+        protected HashSet<Keys> readonlyactions = new();
+
         private Encoding encoding;
         private int updateLevel;
 
@@ -183,14 +189,14 @@ namespace ICSharpCode.TextEditor
             }
         }
 
-        public bool IsEditAction(Keys keyData)
+        public bool IsEditAction(Keys keyData, bool readOnly)
         {
-            return editactions.ContainsKey(keyData);
+            return editactions.ContainsKey(keyData) && (readOnly || !readonlyactions.Contains(keyData));
         }
 
-        internal IEditAction GetEditAction(Keys keyData)
+        internal IEditAction GetEditAction(Keys keyData, bool readOnly)
         {
-            if (!IsEditAction(keyData))
+            if (!IsEditAction(keyData, readOnly))
                 return null;
             return editactions[keyData];
         }
@@ -231,6 +237,10 @@ namespace ICSharpCode.TextEditor
             editactions[Keys.PageUp | Keys.Shift] = new ShiftMovePageUp();
             editactions[Keys.PageDown] = new MovePageDown();
             editactions[Keys.PageDown | Keys.Shift] = new ShiftMovePageDown();
+            editactions[Keys.Space] = new Space();
+            readonlyactions.Add(Keys.Space);
+            editactions[Keys.Space | Keys.Shift] = new ShiftSpace();
+            readonlyactions.Add(Keys.Space | Keys.Shift);
 
             editactions[Keys.Return] = new Return();
             editactions[Keys.Tab] = new Tab();

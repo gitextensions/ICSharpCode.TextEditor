@@ -655,6 +655,36 @@ namespace ICSharpCode.TextEditor.Actions
         }
     }
 
+    public class Space : AbstractEditAction
+    {
+        /// <remarks>
+        ///     Executes this edit action
+        /// </remarks>
+        /// <param name="textArea">The <see cref="ItextArea" /> which is used for callback purposes</param>
+        public override void Execute(TextArea textArea)
+        {
+            if (!textArea.Document.ReadOnly)
+                return;
+
+            (new MovePageDown()).Execute(textArea);
+        }
+    }
+
+    public class ShiftSpace : AbstractEditAction
+    {
+        /// <remarks>
+        ///     Executes this edit action
+        /// </remarks>
+        /// <param name="textArea">The <see cref="ItextArea" /> which is used for callback purposes</param>
+        public override void Execute(TextArea textArea)
+        {
+            if (!textArea.Document.ReadOnly)
+                return;
+
+            (new MovePageUp()).Execute(textArea);
+        }
+    }
+
     public class Return : AbstractEditAction
     {
         /// <remarks>
