@@ -36,7 +36,12 @@ namespace ICSharpCode.TextEditor
         ///     action.
         /// </summary>
         protected Dictionary<Keys, IEditAction> editactions = new Dictionary<Keys, IEditAction>();
-        protected HashSet<Keys> readonlyactions = new HashSet<Keys>();
+
+        /// <summary>
+        ///    Key combinations for actions only available in read-only mode.
+        ///    In read-write these keys are ignored.
+        /// </summary>
+        protected HashSet<Keys> readonlyactions = new();
 
         private Encoding encoding;
         private int updateLevel;
