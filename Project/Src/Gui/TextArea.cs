@@ -803,7 +803,7 @@ namespace ICSharpCode.TextEditor
                 return true;
 
             // if not (or the process was 'silent', use the standard edit actions
-            var action = MotherTextEditorControl?.GetEditAction(keyData);
+            var action = MotherTextEditorControl?.GetEditAction(keyData, Document.ReadOnly);
             AutoClearSelection = true;
             if (action != null)
             {
