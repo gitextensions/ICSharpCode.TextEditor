@@ -34,7 +34,7 @@ namespace ICSharpCode.TextEditor
 
         public GutterMargin(TextArea textArea) : base(textArea)
         {
-            numberStringFormat.LineAlignment = StringAlignment.Far;
+            numberStringFormat.LineAlignment = StringAlignment.Near;
             numberStringFormat.FormatFlags = StringFormatFlags.MeasureTrailingSpaces | StringFormatFlags.FitBlackBox |
                                              StringFormatFlags.NoWrap | StringFormatFlags.NoClip;
         }
