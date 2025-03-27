@@ -42,7 +42,7 @@ namespace ICSharpCode.TextEditor
         public override Cursor Cursor => RightLeftCursor;
 
         public override int Width
-            => textArea.TextView.WideSpaceWidth*Math.Max(4, (int)Math.Log10(textArea.Document.TotalNumberOfLines) + 4);
+            => textArea.TextView.WideSpaceWidth * (2 * (int)Math.Log10(textArea.Document.TotalNumberOfLines) + 3) / 2;
 
         public override bool IsVisible => textArea.TextEditorProperties.ShowLineNumbers;
 
