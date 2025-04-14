@@ -62,6 +62,8 @@ namespace ICSharpCode.TextEditor
                 ? BrushRegistry.GetBrush(lineNumberPainterColor.BackgroundColor)
                 : SystemBrushes.InactiveBorder;
             var drawBrush = BrushRegistry.GetBrush(lineNumberPainterColor.Color);
+            Brush currentLineBrush = BrushRegistry.GetBrush(SystemColors.WindowText);
+            int caretLine = textArea.Caret.Position.Line;
 
             for (var y = 0; y < (drawingPosition.Height + textArea.TextView.VisibleLineDrawingRemainder)/fontHeight + 1; ++y)
             {
@@ -76,7 +78,7 @@ namespace ICSharpCode.TextEditor
                         g.DrawString(
                             (curLine + 1).ToString(),
                             lineNumberPainterColor.GetFont(TextEditorProperties.FontContainer),
-                            drawBrush,
+                            caretLine == curLine && MarkSelectedLine ? currentLineBrush : drawBrush,
                             backgroundRectangle,
                             numberStringFormat);
                 }
