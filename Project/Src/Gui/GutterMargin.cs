@@ -57,12 +57,13 @@ namespace ICSharpCode.TextEditor
                 return;
 
             var lineNumberPainterColor = textArea.Document.HighlightingStrategy.GetColorFor("LineNumbers");
+            var lineNumberCurrentPainterColor = textArea.Document.HighlightingStrategy.GetColorFor("LineNumberCurrent");
             var fontHeight = textArea.TextView.FontHeight;
             var fillBrush = textArea.Enabled
                 ? BrushRegistry.GetBrush(lineNumberPainterColor.BackgroundColor)
                 : SystemBrushes.InactiveBorder;
             var drawBrush = BrushRegistry.GetBrush(lineNumberPainterColor.Color);
-            Brush currentLineBrush = BrushRegistry.GetBrush(SystemColors.WindowText);
+            Brush currentLineBrush = BrushRegistry.GetBrush(lineNumberCurrentPainterColor.Color);
             int caretLine = textArea.Caret.Position.Line;
 
             for (var y = 0; y < (drawingPosition.Height + textArea.TextView.VisibleLineDrawingRemainder)/fontHeight + 1; ++y)
@@ -73,12 +74,17 @@ namespace ICSharpCode.TextEditor
                 {
                     g.FillRectangle(fillBrush, backgroundRectangle);
                     var curLine = textArea.Document.GetFirstLogicalLine(textArea.Document.GetVisibleLine(textArea.TextView.FirstVisibleLine) + y);
+                    bool isCurrentLine = curLine == textArea.Caret.Line && MarkSelectedLine;
+                    Brush lineBrush = isCurrentLine ? currentLineBrush : drawBrush;
+                    Font font = isCurrentLine
+                        ? lineNumberCurrentPainterColor.GetFont(TextEditorProperties.FontContainer)
+                        : lineNumberPainterColor.GetFont(TextEditorProperties.FontContainer);
 
                     if (curLine < textArea.Document.TotalNumberOfLines)
                         g.DrawString(
                             (curLine + 1).ToString(),
-                            lineNumberPainterColor.GetFont(TextEditorProperties.FontContainer),
-                            caretLine == curLine && MarkSelectedLine ? currentLineBrush : drawBrush,
+                            font,
+                            lineBrush,
                             backgroundRectangle,
                             numberStringFormat);
                 }

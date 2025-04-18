@@ -65,6 +65,7 @@ namespace ICSharpCode.TextEditor.Document
                 ["CaretMarker"] = new HighlightColor(nameof(SystemColors.MenuBar), bold: false, italic: false),
                 ["CaretLine"] = new HighlightBackground(nameof(SystemColors.ControlLight), nameof(SystemColors.Window), bold: false, italic: false),
                 ["LineNumbers"] = new HighlightBackground(nameof(SystemColors.GrayText), nameof(SystemColors.Window), bold: false, italic: false),
+                ["LineNumberCurrent"] = new HighlightBackground(nameof(SystemColors.WindowText), nameof(SystemColors.Window), bold: true, italic: false),
                 ["FoldLine"] = new HighlightColor(nameof(SystemColors.ControlDark), bold: false, italic: false),
                 ["FoldMarker"] = new HighlightColor(nameof(SystemColors.WindowText), nameof(SystemColors.Window), bold: false, italic: false),
                 ["SelectedFoldLine"] = new HighlightColor(nameof(SystemColors.WindowText), bold: false, italic: false),
