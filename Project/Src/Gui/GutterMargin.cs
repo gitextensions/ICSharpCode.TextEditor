@@ -57,7 +57,7 @@ namespace ICSharpCode.TextEditor
                 return;
 
             var lineNumberPainterColor = textArea.Document.HighlightingStrategy.GetColorFor("LineNumbers");
-            var lineNumberCurrentPainterColor = textArea.Document.HighlightingStrategy.GetColorFor("LineNumberCurrent");
+            var lineNumberCurrentPainterColor = textArea.Document.HighlightingStrategy.GetColorFor("LineNumberSelected");
             var fontHeight = textArea.TextView.FontHeight;
             var fillBrush = textArea.Enabled
                 ? BrushRegistry.GetBrush(lineNumberPainterColor.BackgroundColor)
