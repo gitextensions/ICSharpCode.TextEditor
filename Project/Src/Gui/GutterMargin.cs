@@ -64,7 +64,6 @@ namespace ICSharpCode.TextEditor
                 : SystemBrushes.InactiveBorder;
             var drawBrush = BrushRegistry.GetBrush(lineNumberPainterColor.Color);
             Brush currentLineBrush = BrushRegistry.GetBrush(lineNumberCurrentPainterColor.Color);
-            int caretLine = textArea.Caret.Position.Line;
 
             for (var y = 0; y < (drawingPosition.Height + textArea.TextView.VisibleLineDrawingRemainder)/fontHeight + 1; ++y)
             {
