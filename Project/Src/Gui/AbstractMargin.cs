@@ -21,6 +21,8 @@ namespace ICSharpCode.TextEditor
     /// </summary>
     public abstract class AbstractMargin
     {
+        private int _caretLine = -1;
+
         protected Rectangle drawingPosition = new Rectangle(x: 0, y: 0, width: 0, height: 0);
 
         protected TextArea textArea;
@@ -42,6 +44,8 @@ namespace ICSharpCode.TextEditor
 
         public ITextEditorProperties TextEditorProperties => textArea.Document.TextEditorProperties;
 
+        public bool MarkSelectedLine { get; set; } = true;
+
         public virtual Cursor Cursor { get; set; } = Cursors.Default;
 
         public virtual int Width => -1;
@@ -61,6 +65,17 @@ namespace ICSharpCode.TextEditor
         public virtual void HandleMouseLeave(EventArgs e)
         {
             MouseLeave?.Invoke(this, e);
+        }
+
+        public virtual void SelectedLineChanged(int line)
+        {
+            if (!IsVisible || _caretLine == line || !MarkSelectedLine)
+            {
+                return;
+            }
+
+            _caretLine = line;
+            textArea.Invalidate();
         }
 
         public virtual void Paint(Graphics g, Rectangle rect)
