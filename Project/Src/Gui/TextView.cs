@@ -43,8 +43,10 @@ namespace ICSharpCode.TextEditor
             get => textArea.Document.GetFirstLogicalLine(textArea.VirtualTop.Y/FontHeight);
             set
             {
-                if (FirstVisibleLine != value)
-                    textArea.VirtualTop = new Point(textArea.VirtualTop.X, textArea.Document.GetVisibleLine(value)*FontHeight);
+                // Clamp the value in order to avoid scrolling the text out of view
+                int clampedValue = Math.Max(0, Math.Min(value, textArea.Document.TotalNumberOfLines - textArea.TextView.VisibleLineCount + 1));
+                if (FirstVisibleLine != clampedValue)
+                    textArea.VirtualTop = new Point(textArea.VirtualTop.X, textArea.Document.GetVisibleLine(clampedValue) * FontHeight);
             }
         }
 
