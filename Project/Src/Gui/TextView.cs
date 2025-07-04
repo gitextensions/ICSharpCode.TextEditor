@@ -43,9 +43,15 @@ namespace ICSharpCode.TextEditor
             get => textArea.Document.GetFirstLogicalLine(textArea.VirtualTop.Y/FontHeight);
             set
             {
+                int orgFirstVisibleLine = FirstVisibleLine;
+                if (FirstVisibleLine != value)
+                    textArea.VirtualTop = new Point(textArea.VirtualTop.X, textArea.Document.GetVisibleLine(value)*FontHeight);
                 int clampedValue = Math.Max(0, Math.Min(value, textArea.Document.TotalNumberOfLines - textArea.TextView.VisibleLineCount + 1));
-                if (FirstVisibleLine != clampedValue)
+                if (value != clampedValue)
+                {
+                    MessageBox.Show($"{orgFirstVisibleLine} -> {value} := {clampedValue} <= {textArea.Document.TotalNumberOfLines} - {textArea.TextView.VisibleLineCount} + 1");
                     textArea.VirtualTop = new Point(textArea.VirtualTop.X, textArea.Document.GetVisibleLine(clampedValue) * FontHeight);
+                }
             }
         }
 
