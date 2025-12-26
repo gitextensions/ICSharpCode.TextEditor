@@ -14,17 +14,12 @@ public class TrackableVScrollBar : VScrollBar
     /// </summary>
     public bool IsMouseDown { get; private set; }
 
-    public TrackableVScrollBar()
-    {
-        this.Scroll += VScrollBar_Scroll;
-    }
-
     /// <summary>
     /// Occurs when the user finishes scrolling and releases the mouse button.
     /// </summary>
     public event ScrollEventHandler MouseScrollEnded;
 
-    private void VScrollBar_Scroll(object sender, ScrollEventArgs e)
+    protected override void OnScroll(ScrollEventArgs e)
     {
         if (e.Type == ScrollEventType.EndScroll)
         {
@@ -35,6 +30,8 @@ public class TrackableVScrollBar : VScrollBar
                 MouseScrollEnded?.Invoke(this, e);
             }
         }
+
+        base.OnScroll(e);
     }
 
     protected override void WndProc(ref Message m)

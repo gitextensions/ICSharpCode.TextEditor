@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using FluentAssertions;
 using NUnit.Framework;
 
 namespace ICSharpCode.TextEditor.Tests.TextEditorControl;
@@ -20,7 +20,7 @@ public class ScrollBarTests
     }
 
     [Test]
-    public async Task TextEditorControl_with_text_requiring_both_scrollbars_should_show_both()
+    public void TextEditorControl_with_text_requiring_both_scrollbars_should_show_both()
     {
         SetupForm(width: 300, height: 276);
 
@@ -43,12 +43,12 @@ public class ScrollBarTests
 
         Application.DoEvents();
 
-        Assert.That(_textEditorControl.ActiveTextAreaControl.VScrollBar.Visible, Is.True);
-        Assert.That(_textEditorControl.ActiveTextAreaControl.HScrollBar.Visible, Is.True);
+        _textEditorControl.ActiveTextAreaControl.VScrollBar.Visible.Should().BeTrue();
+        _textEditorControl.ActiveTextAreaControl.HScrollBar.Visible.Should().BeTrue();
     }
 
     [Test]
-    public async Task TextEditorControl_with_last_partialy_hidden_by_horizontal_scrollbar_should_cause_vertical_scrollbar()
+    public void TextEditorControl_with_last_partialy_hidden_by_horizontal_scrollbar_should_cause_vertical_scrollbar()
     {
         SetupForm(width: 300, height: 270);
 
@@ -70,12 +70,12 @@ public class ScrollBarTests
 
         Application.DoEvents();
 
-        Assert.That(_textEditorControl.ActiveTextAreaControl.VScrollBar.Visible, Is.True);
-        Assert.That(_textEditorControl.ActiveTextAreaControl.HScrollBar.Visible, Is.True);
+        _textEditorControl.ActiveTextAreaControl.VScrollBar.Visible.Should().BeTrue();
+        _textEditorControl.ActiveTextAreaControl.HScrollBar.Visible.Should().BeTrue();
     }
 
     [Test]
-    public async Task TextEditorControl_with_partial_lines_at_top_and_bottom_should_take_last_lines_width_into_account()
+    public void TextEditorControl_with_partial_lines_at_top_and_bottom_should_take_last_lines_width_into_account()
     {
         SetupForm(width: 300, height: 238);
 
@@ -101,12 +101,12 @@ public class ScrollBarTests
 
         Application.DoEvents();
 
-        Assert.That(_textEditorControl.ActiveTextAreaControl.VScrollBar.Visible, Is.True);
-        Assert.That(_textEditorControl.ActiveTextAreaControl.HScrollBar.Visible, Is.True);
+        _textEditorControl.ActiveTextAreaControl.VScrollBar.Visible.Should().BeTrue();
+        _textEditorControl.ActiveTextAreaControl.HScrollBar.Visible.Should().BeTrue();
     }
 
     [Test]
-    public async Task TextEditorControl_with_vScrollBar_should_have_no_scrollbars_if_not_necessary_after_update()
+    public void TextEditorControl_with_vScrollBar_should_have_no_scrollbars_if_not_necessary_after_update()
     {
         SetupForm(width: 300, height: 250);
 
@@ -130,8 +130,8 @@ public class ScrollBarTests
 
         Application.DoEvents();
 
-        Assert.That(_textEditorControl.ActiveTextAreaControl.VScrollBar.Visible, Is.False);
-        Assert.That(_textEditorControl.ActiveTextAreaControl.HScrollBar.Visible, Is.False);
+        _textEditorControl.ActiveTextAreaControl.VScrollBar.Visible.Should().BeFalse();
+        _textEditorControl.ActiveTextAreaControl.HScrollBar.Visible.Should().BeFalse();
     }
 
     private void SetupForm(int width, int height)
