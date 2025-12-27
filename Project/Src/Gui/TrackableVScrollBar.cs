@@ -3,19 +3,19 @@
 namespace ICSharpCode.TextEditor;
 
 /// <summary>
-/// A vertical scrollbar control that tracks mouse down events to detect when the user is actively dragging the scrollbar.
+///  A vertical scrollbar control that tracks mouse down events to detect when the user is actively dragging the scrollbar.
 /// </summary>
 public class TrackableVScrollBar : VScrollBar
 {
     const int WM_LBUTTONDOWN = 0x0201;
 
     /// <summary>
-    /// Gets a value indicating whether the mouse button is currently pressed down on the scrollbar.
+    ///  Gets a value indicating whether the mouse button is currently pressed down on the scrollbar.
     /// </summary>
     public bool IsMouseDown { get; private set; }
 
     /// <summary>
-    /// Occurs when the user finishes scrolling and releases the mouse button.
+    ///  Occurs when the user finishes scrolling and releases the mouse button.
     /// </summary>
     public event ScrollEventHandler MouseScrollEnded;
 
@@ -36,6 +36,7 @@ public class TrackableVScrollBar : VScrollBar
 
     protected override void WndProc(ref Message m)
     {
+        // VScrollBar control doesn't trigger OnMouseDown, so we need to handle the message directly.
         if (m.Msg == WM_LBUTTONDOWN)
         {
             IsMouseDown = true;
