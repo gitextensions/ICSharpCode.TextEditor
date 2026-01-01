@@ -162,9 +162,9 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
                 Close();
         }
 
-        protected override void OnClosed(EventArgs e)
+        protected override void OnFormClosed(FormClosedEventArgs e)
         {
-            base.OnClosed(e);
+            base.OnFormClosed(e);
 
             // take out the inserted methods
             parentForm.LocationChanged -= ParentFormLocationChanged;
