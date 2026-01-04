@@ -38,17 +38,7 @@ namespace ICSharpCode.TextEditor
         public int LineHeightRemainder => textArea.VirtualTop.Y%FontHeight;
 
         /// <summary>Gets the first visible <b>logical</b> line.</summary>
-        public int FirstVisibleLine
-        {
-            get => textArea.Document.GetFirstLogicalLine(textArea.VirtualTop.Y/FontHeight);
-            set
-            {
-                // Clamp the value in order to avoid scrolling the text out of view
-                int clampedValue = Math.Max(0, Math.Min(value, textArea.Document.TotalNumberOfLines - textArea.TextView.VisibleLineCount + 1));
-                if (FirstVisibleLine != clampedValue)
-                    textArea.VirtualTop = new Point(textArea.VirtualTop.X, textArea.Document.GetVisibleLine(clampedValue) * FontHeight);
-            }
-        }
+        public int FirstVisibleLine => textArea.Document.GetFirstLogicalLine(textArea.VirtualTop.Y/FontHeight);
 
         public int VisibleLineDrawingRemainder => textArea.VirtualTop.Y%FontHeight;
 
@@ -1135,5 +1125,26 @@ namespace ICSharpCode.TextEditor
         }
 
         #endregion
+
+        /// <summary>
+        ///  Sets the first visible <b>logical</b> line.
+        /// </summary>
+        /// <param name="lineIndex">
+        ///  The logical line which should be the top line.
+        ///  The value is clamped in order to avoid scrolling the text out of view.
+        /// </param>
+        /// <param name="possibleHeightLoss">
+        ///  A horizontal scrollbar might be needed and would reduce the number of visible lines.
+        ///  Pass the height scrollbar height if it should be considered when clamping <paramref name="lineIndex"/>.
+        /// </param>
+        public void SetFirstVisibleLine(int lineIndex, int possibleHeightLoss = 0)
+        {
+            int completelyVisibleLineCount = (DrawingPosition.Height - possibleHeightLoss) / FontHeight;
+            int clampedValue = Math.Max(0, Math.Min(lineIndex, textArea.Document.TotalNumberOfLines - completelyVisibleLineCount));
+            if (FirstVisibleLine != clampedValue)
+            {
+                textArea.VirtualTop = new Point(textArea.VirtualTop.X, textArea.Document.GetVisibleLine(clampedValue) * FontHeight);
+            }
+        }
     }
 }

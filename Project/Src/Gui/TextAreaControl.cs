@@ -508,9 +508,14 @@ namespace ICSharpCode.TextEditor
                     if (TextArea.TextView.VisibleLineCount == 1)
                         VScrollBar.Value = Math.Max(0, Math.Min(VScrollBar.Maximum, (line - scrollMarginHeight - 1) * TextArea.TextView.FontHeight));
                     else
+                    {
+                        int possibleHeightLoss = HScrollBar.Visible ? 0 : SystemInformation.HorizontalScrollBarHeight;
+                        int fontHeight = TextArea.TextView.FontHeight;
+                        int completelyVisibleLinesCount = (TextArea.TextView.DrawingPosition.Height - possibleHeightLoss) / fontHeight;
                         VScrollBar.Value = Math.Min(
                             VScrollBar.Maximum,
-                            (line - TextArea.TextView.VisibleLineCount + scrollMarginHeight - 1) * TextArea.TextView.FontHeight);
+                            (line - completelyVisibleLinesCount + scrollMarginHeight - 1) * fontHeight);
+                    }
                     VScrollBarValueChanged(this, EventArgs.Empty);
                 }
             }
