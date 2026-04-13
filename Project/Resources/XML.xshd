@@ -10,7 +10,7 @@ hello@exr.be
 https://github.com/ei
 -->
 
-<SyntaxDefinition name="XML" extensions=".xml;.xsl;.xslt;.xhtml;.xsd;.syn;.lang;.manifest;.config;.addin;.xshd;.wxs;.wxi;.wxl;.proj;.csproj;.vbproj;.vcproj;.vcxproj;.vcxproj.filters;.resx;.user;.ilproj;.booproj;.build;.xfrm;.targets;.props;.xaml;.xpt;.xft;.map;.wsdl;.disco;.ruleset;.settings;.DotSettings;.cd;.svg;.xlf;.fodp;.fods;.fodt;.arxml">
+<SyntaxDefinition name="XML" extensions=".addin;.arxml;.booproj;.build;.cd;.config;.csproj;.disco;.DotSettings;.fodp;.fods;.fodt;.ilproj;.lang;.manifest;.map;.proj;.props;.resx;.ruleset;.settings;.slnx;.svg;.syn;.targets;.user;.vbproj;.vcproj;.vcxproj;.vcxproj.filters;.wsdl;.wxi;.wxl;.wxs;.xaml;.xfrm;.xft;.xhtml;.xlf;.xml;.xpt;.xsd;.xshd;.xsl;.xslt">
     <Environment/>
     
     <Properties>

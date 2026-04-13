@@ -10,7 +10,7 @@ hello@exr.be
 https://github.com/ei
 -->
 
-<SyntaxDefinition name="JSON" extensions=".json">
+<SyntaxDefinition name="JSON" extensions=".json;.slnf;.vsconfig">
     
     <Environment/>
     
