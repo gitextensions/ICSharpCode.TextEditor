@@ -7,6 +7,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text;
 using ICSharpCode.TextEditor.Document;
 
@@ -91,7 +92,7 @@ namespace ICSharpCode.TextEditor.Actions
             textArea.Document.UndoStack.StartUndoGroup();
             if (textArea.SelectionManager.HasSomethingSelected)
             {
-                foreach (var selection in textArea.SelectionManager.SelectionCollection)
+                foreach (ISelection selection in CollectionsMarshal.AsSpan(textArea.SelectionManager.SelectionCollection))
                 {
                     var startLine = selection.StartPosition.Y;
                     var endLine = selection.EndPosition.Y;
@@ -174,7 +175,7 @@ namespace ICSharpCode.TextEditor.Actions
         {
             if (textArea.SelectionManager.HasSomethingSelected)
             {
-                foreach (var selection in textArea.SelectionManager.SelectionCollection)
+                foreach (ISelection selection in CollectionsMarshal.AsSpan(textArea.SelectionManager.SelectionCollection))
                 {
                     var startLine = selection.StartPosition.Y;
                     var endLine = selection.EndPosition.Y;
@@ -296,25 +297,23 @@ namespace ICSharpCode.TextEditor.Actions
             if (textArea.Document.ReadOnly)
                 return;
 
-            string comment = null;
-            if (textArea.Document.HighlightingStrategy.Properties.ContainsKey("LineComment"))
-                comment = textArea.Document.HighlightingStrategy.Properties["LineComment"];
+            textArea.Document.HighlightingStrategy.Properties.TryGetValue("LineComment", out string comment);
 
-            if (comment == null || comment.Length == 0)
+            if (string.IsNullOrEmpty(comment))
                 return;
 
             textArea.Document.UndoStack.StartUndoGroup();
             if (textArea.SelectionManager.HasSomethingSelected)
             {
                 var shouldComment = true;
-                foreach (var selection in textArea.SelectionManager.SelectionCollection)
+                foreach (ISelection selection in CollectionsMarshal.AsSpan(textArea.SelectionManager.SelectionCollection))
                     if (!ShouldComment(textArea.Document, comment, selection, selection.StartPosition.Y, selection.EndPosition.Y))
                     {
                         shouldComment = false;
                         break;
                     }
 
-                foreach (var selection in textArea.SelectionManager.SelectionCollection)
+                foreach (ISelection selection in CollectionsMarshal.AsSpan(textArea.SelectionManager.SelectionCollection))
                 {
                     textArea.BeginUpdate();
                     if (shouldComment)
@@ -357,15 +356,11 @@ namespace ICSharpCode.TextEditor.Actions
             if (textArea.Document.ReadOnly)
                 return;
 
-            string commentStart = null;
-            if (textArea.Document.HighlightingStrategy.Properties.ContainsKey("BlockCommentBegin"))
-                commentStart = textArea.Document.HighlightingStrategy.Properties["BlockCommentBegin"];
+            textArea.Document.HighlightingStrategy.Properties.TryGetValue("BlockCommentBegin", out string commentStart);
 
-            string commentEnd = null;
-            if (textArea.Document.HighlightingStrategy.Properties.ContainsKey("BlockCommentEnd"))
-                commentEnd = textArea.Document.HighlightingStrategy.Properties["BlockCommentEnd"];
+            textArea.Document.HighlightingStrategy.Properties.TryGetValue("BlockCommentEnd", out string commentEnd);
 
-            if (commentStart == null || commentStart.Length == 0 || commentEnd == null || commentEnd.Length == 0)
+            if (string.IsNullOrEmpty(commentStart) || string.IsNullOrEmpty(commentEnd))
                 return;
 
             int selectionStartOffset;

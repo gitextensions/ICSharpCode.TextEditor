@@ -7,6 +7,7 @@
 
 using System.Collections.Generic;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Text;
 using ICSharpCode.TextEditor.Document;
 
@@ -35,7 +36,7 @@ namespace ICSharpCode.TextEditor.Util
             rtf.Append(value: '\n');
             rtf.Append(@"\viewkind4\uc1\pard");
             rtf.Append(fileContent);
-            rtf.Append("}");
+            rtf.Append('}');
             return rtf.ToString();
         }
 
@@ -43,14 +44,14 @@ namespace ICSharpCode.TextEditor.Util
         {
             rtf.Append(@"{\colortbl ;");
             rtf.Append(colorString);
-            rtf.Append("}");
+            rtf.Append('}');
         }
 
         private static void BuildFontTable(IDocument doc, StringBuilder rtf)
         {
             rtf.Append(@"{\fonttbl");
-            rtf.Append(@"{\f0\fmodern\fprq1\fcharset0 " + doc.TextEditorProperties.Font.Name + ";}");
-            rtf.Append("}");
+            rtf.Append(@"{\f0\fmodern\fprq1\fcharset0 ").Append(doc.TextEditorProperties.Font.Name).Append(";}");
+            rtf.Append('}');
         }
 
         private static string BuildFileContent(TextArea textArea)
@@ -62,7 +63,7 @@ namespace ICSharpCode.TextEditor.Util
             var oldBold = false;
             var escapeSequence = false;
 
-            foreach (var selection in textArea.SelectionManager.SelectionCollection)
+            foreach (ISelection selection in CollectionsMarshal.AsSpan(textArea.SelectionManager.SelectionCollection))
             {
                 var selectionOffset = textArea.Document.PositionToOffset(selection.StartPosition);
                 var selectionEndOffset = textArea.Document.PositionToOffset(selection.EndPosition);
@@ -73,7 +74,7 @@ namespace ICSharpCode.TextEditor.Util
                     if (line.Words == null)
                         continue;
 
-                    foreach (var word in line.Words)
+                    foreach (TextWord word in CollectionsMarshal.AsSpan(line.Words))
                         switch (word.Type)
                         {
                             case TextWordType.Space:
@@ -96,15 +97,19 @@ namespace ICSharpCode.TextEditor.Util
                                 {
                                     var colorstr = c.R + ", " + c.G + ", " + c.B;
 
-                                    if (!colors.ContainsKey(colorstr))
+                                    if (!colors.TryGetValue(colorstr, out int color))
                                     {
-                                        colors[colorstr] = ++colorNum;
-                                        colorString.Append(@"\red" + c.R + @"\green" + c.G + @"\blue" + c.B + ";");
+                                        color = ++colorNum;
+                                        colors[colorstr] = color;
+                                        colorString.Append(@"\red").Append(c.R)
+                                            .Append(@"\green").Append(c.G)
+                                            .Append(@"\blue").Append(c.B)
+                                            .Append(';');
                                     }
 
                                     if (c != curColor || firstLine)
                                     {
-                                        rtf.Append(@"\cf" + colors[colorstr]);
+                                        rtf.Append(@"\cf").Append(color);
                                         curColor = c;
                                         escapeSequence = true;
                                     }
@@ -131,7 +136,7 @@ namespace ICSharpCode.TextEditor.Util
 
                                     if (firstLine)
                                     {
-                                        rtf.Append(@"\f0\fs" + textArea.TextEditorProperties.Font.Size*2);
+                                        rtf.Append(@"\f0\fs").Append(textArea.TextEditorProperties.Font.Size * 2);
                                         firstLine = false;
                                     }
 
@@ -183,7 +188,7 @@ namespace ICSharpCode.TextEditor.Util
                         if (c < 256)
                             rtfOutput.Append(c);
                         else
-                            rtfOutput.Append("\\u" + unchecked((short)c) + "?");
+                            rtfOutput.Append("\\u").Append(unchecked((short)c)).Append('?');
                         break;
                 }
         }

@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace ICSharpCode.TextEditor.Document
 {
@@ -60,12 +61,11 @@ namespace ICSharpCode.TextEditor.Document
 
         public List<TextMarker> GetMarkers(int offset)
         {
-            if (!markersTable.ContainsKey(offset))
+            if (!markersTable.TryGetValue(offset, out List<TextMarker> markers))
             {
-                var markers = new List<TextMarker>();
-                for (var i = 0; i < textMarker.Count; ++i)
+                markers = [];
+                foreach (TextMarker marker in CollectionsMarshal.AsSpan(textMarker))
                 {
-                    var marker = textMarker[i];
                     if (marker.Offset <= offset && offset <= marker.EndOffset)
                         markers.Add(marker);
                 }
@@ -73,16 +73,15 @@ namespace ICSharpCode.TextEditor.Document
                 markersTable[offset] = markers;
             }
 
-            return markersTable[offset];
+            return markers;
         }
 
         public List<TextMarker> GetMarkers(int offset, int length)
         {
             var endOffset = offset + length - 1;
             var markers = new List<TextMarker>();
-            for (var i = 0; i < textMarker.Count; ++i)
+            foreach (TextMarker marker in CollectionsMarshal.AsSpan(textMarker))
             {
-                var marker = textMarker[i];
                 var markerOffset = marker.Offset;
                 var markerEndOffset = marker.EndOffset;
                 if ( // start in marker region

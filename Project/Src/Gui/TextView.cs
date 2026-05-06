@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using ICSharpCode.TextEditor.Document;
 
@@ -27,6 +28,7 @@ namespace ICSharpCode.TextEditor
 
         public TextView(TextArea textArea) : base(textArea)
         {
+            _measureCacheSpanLookup = measureCache.GetAlternateLookup<ReadOnlySpan<char>>();
             Cursor = Cursors.IBeam;
             OptionsChanged();
         }
@@ -160,7 +162,7 @@ namespace ICSharpCode.TextEditor
 
                     // search the first starting folding
                     var firstFolding = starts[index: 0];
-                    foreach (var fm in starts)
+                    foreach (FoldMarker fm in CollectionsMarshal.AsSpan(starts))
                         if (fm.StartColumn < firstFolding.StartColumn)
                             firstFolding = fm;
                     starts.Clear();
@@ -261,7 +263,7 @@ namespace ICSharpCode.TextEditor
             return physicalXPos + wordWidth + 1;
         }
 
-        private struct MarkerToDraw
+        private readonly struct MarkerToDraw
         {
             internal readonly TextMarker marker;
             internal readonly RectangleF drawingRect;
@@ -283,7 +285,7 @@ namespace ICSharpCode.TextEditor
 
         private void DrawMarkerDraw(Graphics g)
         {
-            foreach (MarkerToDraw m in markersToDraw)
+            foreach (MarkerToDraw m in CollectionsMarshal.AsSpan(markersToDraw))
             {
                 TextMarker marker = m.marker;
                 RectangleF drawingRect = m.drawingRect;
@@ -330,9 +332,9 @@ namespace ICSharpCode.TextEditor
         /// <param name="length">The length.</param>
         /// <param name="markers">All markers that have been found.</param>
         /// <returns>The Brush or null when no marker was found.</returns>
-        private static Brush? GetMarkerBrush(IList<TextMarker> markers, ref Color foreColor)
+        private static Brush? GetMarkerBrush(List<TextMarker> markers, ref Color foreColor)
         {
-            foreach (var marker in markers)
+            foreach (TextMarker marker in CollectionsMarshal.AsSpan(markers))
                 if (marker.TextMarkerType == TextMarkerType.SolidBlock)
                 {
                     if (marker.OverrideForeColor)
@@ -390,7 +392,7 @@ namespace ICSharpCode.TextEditor
                 else
                     wordForeColor = currentWord.Color;
 
-                IList<TextMarker> markers = Document.MarkerStrategy.GetMarkers(currentLine.Offset + currentWordOffset, currentWord.Length);
+                List<TextMarker> markers = Document.MarkerStrategy.GetMarkers(currentLine.Offset + currentWordOffset, currentWord.Length);
                 var wordBackBrush = GetMarkerBrush(markers, ref wordForeColor);
 
                 // It is possible that we have to split the current word because a marker/the selection begins/ends inside it
@@ -416,7 +418,7 @@ namespace ICSharpCode.TextEditor
                         splitPos = Math.Min(splitPos, selectionRange.StartColumn - currentWordOffset);
                     else if (selectionRange.EndColumn > currentWordOffset && selectionRange.EndColumn <= currentWordEndOffset)
                         splitPos = Math.Min(splitPos, selectionRange.EndColumn - currentWordOffset);
-                    foreach (var marker in markers)
+                    foreach (TextMarker marker in CollectionsMarshal.AsSpan(markers))
                     {
                         var markerColumn = marker.Offset - currentLine.Offset;
                         var markerEndColumn = marker.EndOffset - currentLine.Offset + 1; // make end offset exclusive
@@ -501,7 +503,7 @@ namespace ICSharpCode.TextEditor
                     physicalXPos += wordWidth;
                 }
 
-                foreach (var marker in markers)
+                foreach (TextMarker marker in CollectionsMarshal.AsSpan(markers))
                     if (marker.TextMarkerType != TextMarkerType.SolidBlock)
                         DrawMarker(marker, wordRectangle);
 
@@ -523,8 +525,8 @@ namespace ICSharpCode.TextEditor
             if (physicalXPos < lineRectangle.Right && endColumn >= currentLine.Length)
             {
                 // draw markers at line end
-                IList<TextMarker> markers = Document.MarkerStrategy.GetMarkers(currentLine.Offset + currentLine.Length);
-                foreach (var marker in markers)
+                List<TextMarker> markers = Document.MarkerStrategy.GetMarkers(currentLine.Offset + currentLine.Length);
+                foreach (TextMarker marker in CollectionsMarshal.AsSpan(markers))
                     if (marker.TextMarkerType != TextMarkerType.SolidBlock)
                         DrawMarker(marker, new RectangleF(physicalXPos, lineRectangle.Y, WideSpaceWidth, lineRectangle.Height));
             }
@@ -532,9 +534,9 @@ namespace ICSharpCode.TextEditor
             return physicalXPos;
         }
 
-        private int DrawDocumentWord(Graphics g, string word, Point position, Font font, Color foreColor, Brush backBrush)
+        private int DrawDocumentWord(Graphics g, in ReadOnlySpan<char> word, Point position, Font font, Color foreColor, Brush backBrush)
         {
-            if (string.IsNullOrEmpty(word))
+            if (word.IsEmpty)
                 return 0;
 
             if (word.Length > MaximumWordLength)
@@ -545,9 +547,9 @@ namespace ICSharpCode.TextEditor
                     var pos = position;
                     pos.X += width;
                     if (i + MaximumWordLength < word.Length)
-                        width += DrawDocumentWord(g, word.Substring(i, MaximumWordLength), pos, font, foreColor, backBrush);
+                        width += DrawDocumentWord(g, word[i..MaximumWordLength], pos, font, foreColor, backBrush);
                     else
-                        width += DrawDocumentWord(g, word.Substring(i, word.Length - i), pos, font, foreColor, backBrush);
+                        width += DrawDocumentWord(g, word[i..], pos, font, foreColor, backBrush);
                 }
 
                 return width;
@@ -570,40 +572,17 @@ namespace ICSharpCode.TextEditor
             return wordWidth;
         }
 
-        private struct WordFontPair
-        {
-            private readonly string word;
-            private readonly Font font;
-
-            public WordFontPair(string word, Font font)
-            {
-                this.word = word;
-                this.font = font;
-            }
-
-            public override bool Equals(object? obj)
-            {
-                return obj is WordFontPair other
-                    && word.Equals(other.word)
-                    && font.Equals(other.font);
-            }
-
-            public override int GetHashCode()
-            {
-                return word.GetHashCode() ^ font.GetHashCode();
-            }
-        }
-
-        private readonly Dictionary<WordFontPair, int> measureCache = new Dictionary<WordFontPair, int>();
+        private readonly Dictionary<string, Dictionary<Font, int>> measureCache = [];
+        private readonly Dictionary<string, Dictionary<Font, int>>.AlternateLookup<ReadOnlySpan<char>> _measureCacheSpanLookup;
 
         // split words after 1000 characters. Fixes GDI+ crash on very longs words, for example
         // a 100 KB Base64-file without any line breaks.
         private const int MaximumWordLength = 1000;
         private const int MaximumCacheSize = 2000;
 
-        private int MeasureStringWidth(Graphics g, string word, Font font)
+        private int MeasureStringWidth(Graphics g, in ReadOnlySpan<char> word, Font font)
         {
-            if (string.IsNullOrEmpty(word))
+            if (word.IsEmpty)
                 return 0;
             int width;
             if (word.Length > MaximumWordLength)
@@ -611,13 +590,13 @@ namespace ICSharpCode.TextEditor
                 width = 0;
                 for (var i = 0; i < word.Length; i += MaximumWordLength)
                     if (i + MaximumWordLength < word.Length)
-                        width += MeasureStringWidth(g, word.Substring(i, MaximumWordLength), font);
+                        width += MeasureStringWidth(g, word[i..MaximumWordLength], font);
                     else
-                        width += MeasureStringWidth(g, word.Substring(i, word.Length - i), font);
+                        width += MeasureStringWidth(g, word[i..], font);
                 return width;
             }
 
-            if (measureCache.TryGetValue(new WordFontPair(word, font), out width))
+            if (_measureCacheSpanLookup.TryGetValue(word, out Dictionary<Font, int>? fontWidths) && fontWidths.TryGetValue(font, out width))
                 return width;
             if (measureCache.Count > MaximumCacheSize)
                 measureCache.Clear();
@@ -630,7 +609,11 @@ namespace ICSharpCode.TextEditor
             // [...]
             // Replaced GDI+ measurement with GDI measurement: faster and even more exact
             width = TextRenderer.MeasureText(g, word, font, new Size(short.MaxValue, short.MaxValue), textFormatFlags).Width;
-            measureCache.Add(new WordFontPair(word, font), width);
+            if (!_measureCacheSpanLookup.TryGetValue(word, out fontWidths))
+                _measureCacheSpanLookup[word] = new Dictionary<Font, int>() { { font, width } };
+            else
+                fontWidths[font] = width;
+
             return width;
         }
 
@@ -647,24 +630,24 @@ namespace ICSharpCode.TextEditor
 
         public int GetWidth(char ch, Font font)
         {
-            if (!fontBoundCharWidth.ContainsKey(font))
-                fontBoundCharWidth.Add(font, new Dictionary<char, int>());
-            if (!fontBoundCharWidth[font].ContainsKey(ch))
+            if (!fontBoundCharWidth.TryGetValue(font, out Dictionary<char, int>? widths))
+                fontBoundCharWidth[font] = widths = new Dictionary<char, int>();
+            if (!widths.TryGetValue(ch, out int width))
                 using (var g = textArea.CreateGraphics())
                 {
                     return GetWidth(g, ch, font);
                 }
 
-            return fontBoundCharWidth[font][ch];
+            return width;
         }
 
         public int GetWidth(Graphics g, char ch, Font font)
         {
-            if (!fontBoundCharWidth.ContainsKey(font))
-                fontBoundCharWidth.Add(font, new Dictionary<char, int>());
-            if (!fontBoundCharWidth[font].ContainsKey(ch))
-                fontBoundCharWidth[font].Add(ch, MeasureStringWidth(g, ch.ToString(), font));
-            return fontBoundCharWidth[font][ch];
+            if (!fontBoundCharWidth.TryGetValue(font, out Dictionary<char, int>? widths))
+                fontBoundCharWidth[font] = widths = new Dictionary<char, int>();
+            if (!widths.TryGetValue(ch, out int width))
+                widths[ch] = width = MeasureStringWidth(g, [ch], font);
+            return width;
         }
 
         public int GetWidth(Graphics g, string text, Font font)
@@ -856,7 +839,7 @@ namespace ICSharpCode.TextEditor
                             {
                                 for (var j = 0; j < text.Length; j++)
                                 {
-                                    newDrawingPos = drawingPos + MeasureStringWidth(g, text[j].ToString(), font);
+                                    newDrawingPos = drawingPos + MeasureStringWidth(g, [text[j]], font);
                                     if (newDrawingPos >= targetVisualPosX)
                                     {
                                         if (IsNearerToAThanB(targetVisualPosX, drawingPos, newDrawingPos))
@@ -1054,7 +1037,7 @@ namespace ICSharpCode.TextEditor
             g.DrawRectangle(Pens.Blue, rect);
         }
 
-        private static void DrawString(Graphics g, string text, Font font, Color color, int x, int y)
+        private static void DrawString(Graphics g, in ReadOnlySpan<char> text, Font font, Color color, int x, int y)
         {
             TextRenderer.DrawText(g, text, font, new Point(x, y), color, textFormatFlags);
         }
