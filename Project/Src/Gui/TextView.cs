@@ -547,7 +547,7 @@ namespace ICSharpCode.TextEditor
                     var pos = position;
                     pos.X += width;
                     if (i + MaximumWordLength < word.Length)
-                        width += DrawDocumentWord(g, word[i..MaximumWordLength], pos, font, foreColor, backBrush);
+                        width += DrawDocumentWord(g, word[i..(i + MaximumWordLength)], pos, font, foreColor, backBrush);
                     else
                         width += DrawDocumentWord(g, word[i..], pos, font, foreColor, backBrush);
                 }
@@ -590,7 +590,7 @@ namespace ICSharpCode.TextEditor
                 width = 0;
                 for (var i = 0; i < word.Length; i += MaximumWordLength)
                     if (i + MaximumWordLength < word.Length)
-                        width += MeasureStringWidth(g, word[i..MaximumWordLength], font);
+                        width += MeasureStringWidth(g, word[i..(i + MaximumWordLength)], font);
                     else
                         width += MeasureStringWidth(g, word[i..], font);
                 return width;
