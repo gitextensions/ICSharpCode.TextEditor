@@ -5,6 +5,7 @@
 //     <version>$Revision$</version>
 // </file>
 
+using System;
 using System.Diagnostics;
 using System.Text;
 
@@ -57,7 +58,7 @@ namespace ICSharpCode.TextEditor.Document
                 }
 
             if (i < line.Length)
-                sb.Append(line.Substring(i - consecutiveSpaces));
+                sb.Append(line.AsSpan(i - consecutiveSpaces));
             return sb.ToString();
         }
 

@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace ICSharpCode.TextEditor.Document
@@ -160,7 +161,7 @@ namespace ICSharpCode.TextEditor.Document
         {
             var foldings = new List<FoldMarker>();
             if (foldMarker != null)
-                foreach (var fm in foldMarker)
+                foreach (FoldMarker fm in CollectionsMarshal.AsSpan(foldMarker))
                     if (fm.StartLine < lineNumber && lineNumber < fm.EndLine)
                         foldings.Add(fm);
             return foldings;
@@ -185,7 +186,7 @@ namespace ICSharpCode.TextEditor.Document
             if (foldMarker != null)
             {
                 var end = new Point(x: 0, y: 0);
-                foreach (var fm in foldMarker)
+                foreach (var fm in CollectionsMarshal.AsSpan(foldMarker))
                     if (fm.IsFolded && (fm.StartLine > end.Y || fm.StartLine == end.Y && fm.StartColumn >= end.X))
                     {
                         foldings.Add(fm);
@@ -257,16 +258,16 @@ namespace ICSharpCode.TextEditor.Document
         public string SerializeToString()
         {
             var sb = new StringBuilder();
-            foreach (var marker in foldMarker)
+            foreach (var marker in CollectionsMarshal.AsSpan(foldMarker))
             {
                 sb.Append(marker.Offset);
-                sb.Append("\n");
+                sb.Append('\n');
                 sb.Append(marker.Length);
-                sb.Append("\n");
+                sb.Append('\n');
                 sb.Append(marker.FoldText);
-                sb.Append("\n");
+                sb.Append('\n');
                 sb.Append(marker.IsFolded);
-                sb.Append("\n");
+                sb.Append('\n');
             }
 
             return sb.ToString();
@@ -284,7 +285,7 @@ namespace ICSharpCode.TextEditor.Document
                     var text = lines[i + 2];
                     var isFolded = bool.Parse(lines[i + 3]);
                     var found = false;
-                    foreach (var marker in foldMarker)
+                    foreach (var marker in CollectionsMarshal.AsSpan(foldMarker))
                         if (marker.Offset == offset && marker.Length == length)
                         {
                             marker.IsFolded = isFolded;
@@ -311,7 +312,7 @@ namespace ICSharpCode.TextEditor.Document
 
         public event EventHandler FoldingsChanged;
 
-        private class StartComparer : IComparer<FoldMarker>
+        private sealed class StartComparer : IComparer<FoldMarker>
         {
             public static readonly StartComparer Instance = new StartComparer();
 
@@ -325,7 +326,7 @@ namespace ICSharpCode.TextEditor.Document
             }
         }
 
-        private class EndComparer : IComparer<FoldMarker>
+        private sealed class EndComparer : IComparer<FoldMarker>
         {
             public static readonly EndComparer Instance = new EndComparer();
 
