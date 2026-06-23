@@ -10,7 +10,7 @@ using System.Drawing;
 
 namespace ICSharpCode.TextEditor.Util
 {
-    internal class CountTipText : TipText
+    internal sealed class CountTipText : TipText
     {
         private readonly float triHeight = 10;
         private readonly float triWidth = 10;

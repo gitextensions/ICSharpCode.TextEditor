@@ -124,7 +124,7 @@ namespace ICSharpCode.TextEditor.Util
             }
         }
 
-        private class Node
+        private sealed class Node
         {
             private Node[] children;
             public object color;

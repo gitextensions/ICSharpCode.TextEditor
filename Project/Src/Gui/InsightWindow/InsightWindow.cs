@@ -192,7 +192,7 @@ namespace ICSharpCode.TextEditor.Gui.InsightWindow
                 Refresh();
         }
 
-        private class InsightDataProviderStackElement
+        private sealed class InsightDataProviderStackElement
         {
             public readonly IInsightDataProvider dataProvider;
             public int currentData;

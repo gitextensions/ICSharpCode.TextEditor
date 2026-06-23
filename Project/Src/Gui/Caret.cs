@@ -398,7 +398,7 @@ namespace ICSharpCode.TextEditor
             public abstract void Destroy();
         }
 
-        private class ManagedCaret : CaretImplementation
+        private sealed class ManagedCaret : CaretImplementation
         {
             private readonly Caret parentCaret;
             private readonly TextArea textArea;
@@ -467,7 +467,7 @@ namespace ICSharpCode.TextEditor
             }
         }
 
-        private class Win32Caret : CaretImplementation
+        private sealed class Win32Caret : CaretImplementation
         {
             private readonly TextArea textArea;
 

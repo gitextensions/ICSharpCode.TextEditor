@@ -16,7 +16,7 @@ namespace ICSharpCode.TextEditor.Document
         private const int minGapLength = 128;
         private const int maxGapLength = 2048;
 
-        private char[] buffer = new char[0];
+        private char[] buffer = [];
         private string cachedContent;
 
         private int gapBeginOffset;

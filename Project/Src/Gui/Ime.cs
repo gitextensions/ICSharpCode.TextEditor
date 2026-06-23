@@ -15,7 +15,7 @@ namespace ICSharpCode.TextEditor
     /// <summary>
     ///     Used internally, not for own use.
     /// </summary>
-    internal class Ime
+    internal sealed class Ime
     {
         private const int WM_IME_CONTROL = 0x0283;
 
@@ -147,7 +147,7 @@ namespace ICSharpCode.TextEditor
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        private class COMPOSITIONFORM
+        private sealed class COMPOSITIONFORM
         {
             public int dwStyle;
             public POINT ptCurrentPos;
@@ -155,14 +155,14 @@ namespace ICSharpCode.TextEditor
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        private class POINT
+        private sealed class POINT
         {
             public int x;
             public int y;
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        private class RECT
+        private sealed class RECT
         {
             public int bottom = 0;
             public int left = 0;
@@ -171,7 +171,7 @@ namespace ICSharpCode.TextEditor
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        private class LOGFONT
+        private sealed class LOGFONT
         {
             public byte lfCharSet = 0;
             public byte lfClipPrecision = 0;

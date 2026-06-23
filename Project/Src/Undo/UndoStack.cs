@@ -179,7 +179,7 @@ namespace ICSharpCode.TextEditor.Undo
             ActionRedone?.Invoke(sender: null, e: null);
         }
 
-        private class UndoableSetCaretPosition : IUndoableOperation
+        private sealed class UndoableSetCaretPosition : IUndoableOperation
         {
             private readonly TextLocation pos;
             private readonly UndoStack stack;

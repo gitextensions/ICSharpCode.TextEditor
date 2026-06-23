@@ -13,7 +13,7 @@ namespace ICSharpCode.TextEditor.Util
     /// <summary>
     ///     Accumulates mouse wheel deltas and reports the actual number of lines to scroll.
     /// </summary>
-    internal class MouseWheelHandler
+    internal sealed class MouseWheelHandler
     {
         // CODE DUPLICATION: See ICSharpCode.SharpDevelop.Widgets.MouseWheelHandler
 

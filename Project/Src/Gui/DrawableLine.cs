@@ -172,7 +172,7 @@ namespace ICSharpCode.TextEditor
             return xPos;
         }
 
-        private class SimpleTextWord
+        private sealed class SimpleTextWord
         {
             internal static readonly SimpleTextWord Space = new SimpleTextWord(TextWordType.Space, " ", Bold: false, SystemColors.WindowText);
             internal static readonly SimpleTextWord Tab = new SimpleTextWord(TextWordType.Tab, "\t", Bold: false, SystemColors.WindowText);

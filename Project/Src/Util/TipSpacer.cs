@@ -10,7 +10,7 @@ using System.Drawing;
 
 namespace ICSharpCode.TextEditor.Util
 {
-    internal class TipSpacer : TipSection
+    internal sealed class TipSpacer : TipSection
     {
         private readonly SizeF spacerSize;
 

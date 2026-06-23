@@ -260,7 +260,7 @@ namespace ICSharpCode.TextEditor.Document
 
         internal struct RBNode
         {
-            internal LineSegment lineSegment;
+            internal readonly LineSegment lineSegment;
             internal int count;
             internal int totalLength;
 

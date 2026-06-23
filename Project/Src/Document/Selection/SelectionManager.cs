@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace ICSharpCode.TextEditor.Document
@@ -21,7 +22,7 @@ namespace ICSharpCode.TextEditor.Document
         private IDocument document;
         internal SelectFrom selectFrom = new SelectFrom();
 
-        internal List<ISelection> selectionCollection = new List<ISelection>();
+        internal readonly List<ISelection> selectionCollection = [];
         private TextLocation selectionStart;
 
         /// <summary>
@@ -69,7 +70,7 @@ namespace ICSharpCode.TextEditor.Document
             {
                 if (document.ReadOnly)
                     return true;
-                foreach (var sel in selectionCollection)
+                foreach (ISelection sel in CollectionsMarshal.AsSpan(selectionCollection))
                     if (SelectionIsReadOnly(document, sel))
                         return true;
                 return false;
@@ -87,7 +88,7 @@ namespace ICSharpCode.TextEditor.Document
 
 //                PriorityQueue queue = new PriorityQueue();
 
-                foreach (var s in selectionCollection) builder.Append(s.SelectedText);
+                foreach (ISelection s in CollectionsMarshal.AsSpan(selectionCollection)) builder.Append(s.SelectedText);
 //                    queue.Insert(-s.Offset, s);
 
 //                while (queue.Count > 0) {
@@ -297,7 +298,7 @@ namespace ICSharpCode.TextEditor.Document
             var offset = -1;
             var oneLine = true;
 //            PriorityQueue queue = new PriorityQueue();
-            foreach (var s in selectionCollection)
+            foreach (ISelection s in CollectionsMarshal.AsSpan(selectionCollection))
             {
 //                ISelection s = ((ISelection)queue.Remove());
                 if (oneLine)
@@ -325,7 +326,7 @@ namespace ICSharpCode.TextEditor.Document
             if (offset != -1)
             {
                 if (oneLine)
-                    foreach (var i in lines)
+                    foreach (int i in CollectionsMarshal.AsSpan(lines))
                         document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.SingleLine, i));
                 else
                     document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.WholeTextArea));
@@ -358,7 +359,7 @@ namespace ICSharpCode.TextEditor.Document
         /// </returns>
         public ISelection GetSelectionAt(int offset)
         {
-            foreach (var s in selectionCollection)
+            foreach (ISelection s in CollectionsMarshal.AsSpan(selectionCollection))
                 if (s.ContainsOffset(offset))
                     return s;
             return null;
@@ -408,7 +409,7 @@ namespace ICSharpCode.TextEditor.Document
 
         public ColumnRange GetSelectionAtLine(int lineNumber)
         {
-            foreach (var selection in selectionCollection)
+            foreach (ISelection selection in CollectionsMarshal.AsSpan(selectionCollection))
             {
                 var startLine = selection.StartPosition.Y;
                 var endLine = selection.EndPosition.Y;
@@ -447,14 +448,14 @@ namespace ICSharpCode.TextEditor.Document
     }
 
     // selection initiated from...
-    internal class SelectFrom
+    internal sealed class SelectFrom
     {
         public int first = WhereFrom.None; // first selection initiator
         public int where = WhereFrom.None; // last selection initiator
     }
 
     // selection initiated from type...
-    internal class WhereFrom
+    internal sealed class WhereFrom
     {
         public const int None = 0;
         public const int Gutter = 1;

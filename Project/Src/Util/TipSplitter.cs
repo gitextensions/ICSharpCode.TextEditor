@@ -11,7 +11,7 @@ using System.Drawing;
 
 namespace ICSharpCode.TextEditor.Util
 {
-    internal class TipSplitter : TipSection
+    internal sealed class TipSplitter : TipSection
     {
         private readonly bool isHorizontal;
         private readonly float[] offsets;
