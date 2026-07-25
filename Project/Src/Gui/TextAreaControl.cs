@@ -280,22 +280,32 @@ namespace ICSharpCode.TextEditor
                     lineLengthCache = new int[lastLineIndex + LineLengthCacheAdditionalSize];
 
                 var maxLength = 0;
-                for (var lineIndex = firstLineIndex; lineIndex <= lastLineIndex; lineIndex++)
+                Graphics measureGraphics = null;
+                try
                 {
-                    var lineSegment = Document.GetLineSegment(lineIndex);
-                    if (Document.FoldingManager.IsLineVisible(lineIndex))
+                    for (var lineIndex = firstLineIndex; lineIndex <= lastLineIndex; lineIndex++)
                     {
-                        if (lineLengthCache[lineIndex] > 0)
+                        var lineSegment = Document.GetLineSegment(lineIndex);
+                        if (Document.FoldingManager.IsLineVisible(lineIndex))
                         {
-                            maxLength = Math.Max(maxLength, lineLengthCache[lineIndex]);
-                        }
-                        else
-                        {
-                            var visualLength = view.GetVisualColumnFast(lineSegment, lineSegment.Length);
-                            lineLengthCache[lineIndex] = Math.Max(1, visualLength);
-                            maxLength = Math.Max(maxLength, visualLength);
+                            if (lineLengthCache[lineIndex] > 0)
+                            {
+                                maxLength = Math.Max(maxLength, lineLengthCache[lineIndex]);
+                            }
+                            else
+                            {
+                                // created lazily - once the cache is warm no measuring is needed at all
+                                measureGraphics ??= TextArea.CreateGraphics();
+                                var visualLength = view.GetVisualWidthColumns(measureGraphics, lineSegment);
+                                lineLengthCache[lineIndex] = Math.Max(1, visualLength);
+                                maxLength = Math.Max(maxLength, visualLength);
+                            }
                         }
                     }
+                }
+                finally
+                {
+                    measureGraphics?.Dispose();
                 }
 
                 var hScrollBarVisible = HScrollBar.Value != 0 || maxLength > visibleColumnCount || (hScrollBarVisibleNow && VScrollBar.IsMouseDown);
@@ -336,6 +346,9 @@ namespace ICSharpCode.TextEditor
         public void OptionsChanged()
         {
             TextArea.OptionsChanged();
+
+            // the cached line widths are measured with the current font, so they are stale after a font change
+            AdjustScrollBarsClearCache();
 
             if (TextArea.TextEditorProperties.ShowHorizontalRuler)
             {

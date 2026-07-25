@@ -700,6 +700,37 @@ namespace ICSharpCode.TextEditor
         }
 
         /// <summary>
+        ///     Returns the width of <paramref name="line" /> expressed in <see cref="WideSpaceWidth" /> units,
+        ///     which is the unit the horizontal scrollbar operates in.
+        /// </summary>
+        /// <remarks>
+        ///     <see cref="GetVisualColumnFast" /> assumes that every character is exactly one column wide.
+        ///     That assumption does not hold for glyphs which are wider than 'x' - CJK characters, emoji,
+        ///     glyphs taken from a fallback font, or any proportional font - so a line containing them ends up
+        ///     being reported as narrower than it is painted. This method measures the glyphs instead and
+        ///     mirrors the tab handling of <see cref="PaintLinePart" />.
+        /// </remarks>
+        public int GetVisualWidthColumns(Graphics g, LineSegment line)
+        {
+            var font = TextEditorProperties.FontContainer.RegularFont;
+            var tabWidth = WideSpaceWidth*Document.TextEditorProperties.TabIndent;
+            var lineOffset = line.Offset;
+            var width = 0;
+
+            for (var i = 0; i < line.Length; ++i)
+            {
+                var ch = Document.GetCharAt(lineOffset + i);
+                if (ch == '\t')
+                    width = (width + MinTabWidth)/tabWidth*tabWidth + tabWidth;
+                else
+                    width += GetWidth(g, ch, font);
+            }
+
+            // round up so that a glyph which only partially reaches into the last column stays reachable
+            return (width + WideSpaceWidth - 1)/WideSpaceWidth;
+        }
+
+        /// <summary>
         ///     returns line/column for a visual point position
         /// </summary>
         public TextLocation GetLogicalPosition(Point mousePosition)

@@ -134,6 +134,65 @@ public class ScrollBarTests
         _textEditorControl.ActiveTextAreaControl.HScrollBar.Visible.Should().BeFalse();
     }
 
+    [Test]
+    public void HScrollBar_should_be_shown_when_wide_glyphs_exceed_the_visible_width()
+    {
+        SetupForm(width: 300, height: 200);
+
+        var textAreaControl = _textEditorControl.ActiveTextAreaControl;
+        var view = textAreaControl.TextArea.TextView;
+        var font = view.TextEditorProperties.FontContainer.RegularFont;
+
+        int glyphWidth;
+        using (var g = textAreaControl.CreateGraphics())
+        {
+            glyphWidth = view.GetWidth(g, WideGlyph, font);
+        }
+
+        // the test is only meaningful if the glyph really is wider than one column
+        glyphWidth.Should().BeGreaterThan(view.WideSpaceWidth);
+
+        // exactly as many characters as there are visible columns: counting characters sees no
+        // overflow at all, while the glyphs need roughly twice that width to be painted
+        _textEditorControl.Text = new string(WideGlyph, view.DrawingPosition.Width / view.WideSpaceWidth);
+
+        Application.DoEvents();
+
+        textAreaControl.HScrollBar.Visible.Should().BeTrue();
+    }
+
+    [Test]
+    public void HScrollBar_should_allow_scrolling_to_the_end_of_a_line_of_wide_glyphs()
+    {
+        SetupForm(width: 300, height: 200);
+
+        _textEditorControl.Text = new string(WideGlyph, 100);
+
+        Application.DoEvents();
+
+        var textAreaControl = _textEditorControl.ActiveTextAreaControl;
+        var view = textAreaControl.TextArea.TextView;
+        var font = view.TextEditorProperties.FontContainer.RegularFont;
+
+        int lineWidth;
+        using (var g = textAreaControl.CreateGraphics())
+        {
+            view.GetWidth(g, WideGlyph, font).Should().BeGreaterThan(view.WideSpaceWidth);
+            lineWidth = view.GetWidth(g, _textEditorControl.Text, font);
+        }
+
+        // dragging the thumb all the way to the right stops at Maximum - LargeChange + 1;
+        // only setting HScrollBar.Value programmatically can go as far as Maximum
+        var hScrollBar = textAreaControl.HScrollBar;
+        var rightmostThumbValue = hScrollBar.Maximum - hScrollBar.LargeChange + 1;
+        var rightmostVisiblePixel = (rightmostThumbValue * view.WideSpaceWidth) + view.DrawingPosition.Width;
+
+        rightmostVisiblePixel.Should().BeGreaterThanOrEqualTo(lineWidth);
+    }
+
+    /// <summary>U+4E2D, a CJK ideograph: a single character which is painted about two columns wide.</summary>
+    private const char WideGlyph = (char)0x4E2D;
+
     private void SetupForm(int width, int height)
     {
         _form = new Form
