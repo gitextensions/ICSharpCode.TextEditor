@@ -347,7 +347,8 @@ namespace ICSharpCode.TextEditor
         {
             TextArea.OptionsChanged();
 
-            // the cached line widths are measured with the current font, so they are stale after a font change
+            // the cached line widths depend on the rendering options - font, tab size, highlighting -
+            // so any of them changing makes the cache stale
             AdjustScrollBarsClearCache();
 
             if (TextArea.TextEditorProperties.ShowHorizontalRuler)
