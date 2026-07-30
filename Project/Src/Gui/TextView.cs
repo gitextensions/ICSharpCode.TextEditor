@@ -719,7 +719,8 @@ namespace ICSharpCode.TextEditor
             var measured = 0;
 
             var words = line.Words;
-            if (words != null)
+            if (words is not null)
+            {
                 for (var i = 0; i < words.Count; i++)
                 {
                     var word = words[i];
@@ -732,15 +733,13 @@ namespace ICSharpCode.TextEditor
                             width = (width + MinTabWidth)/tabWidth*tabWidth + tabWidth;
                             break;
                         default:
-                            width += MeasureStringWidth(
-                                g,
-                                Document.GetText(lineOffset + measured, word.Length),
-                                word.GetFont(fontContainer) ?? fontContainer.RegularFont);
+                            width += MeasureStringWidth(g, word.Word, word.GetFont(fontContainer) ?? fontContainer.RegularFont);
                             break;
                     }
 
                     measured += word.Length;
                 }
+            }
 
             // Whatever the highlighting has not covered - the whole line while it has not run yet, or a
             // trailing remainder - still has to be accounted for, otherwise the line comes out too narrow
