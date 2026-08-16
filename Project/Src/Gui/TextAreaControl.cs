@@ -34,6 +34,14 @@ namespace ICSharpCode.TextEditor
         private HRuler hRuler;
 
         private int[] lineLengthCache;
+
+        /// <summary>
+        ///     Kept for the lifetime of the control so that measuring line widths does not create a
+        ///     device context per layout pass. Created on first use, because the handle it needs does
+        ///     not exist yet while the control is being constructed.
+        /// </summary>
+        private Graphics measureGraphics;
+
         private TextEditorControl motherTextEditorControl;
         private Point scrollToPosOnNextUpdate;
 
@@ -105,6 +113,12 @@ namespace ICSharpCode.TextEditor
                     {
                         hRuler.Dispose();
                         hRuler = null;
+                    }
+
+                    if (measureGraphics != null)
+                    {
+                        measureGraphics.Dispose();
+                        measureGraphics = null;
                     }
                 }
 
@@ -291,7 +305,8 @@ namespace ICSharpCode.TextEditor
                         }
                         else
                         {
-                            var visualLength = view.GetVisualColumnFast(lineSegment, lineSegment.Length);
+                            measureGraphics ??= TextArea.CreateGraphics();
+                            var visualLength = view.GetVisualWidthColumns(measureGraphics, lineSegment);
                             lineLengthCache[lineIndex] = Math.Max(1, visualLength);
                             maxLength = Math.Max(maxLength, visualLength);
                         }
@@ -336,6 +351,10 @@ namespace ICSharpCode.TextEditor
         public void OptionsChanged()
         {
             TextArea.OptionsChanged();
+
+            // the cached line widths depend on the rendering options - font, tab size, highlighting -
+            // so any of them changing makes the cache stale
+            AdjustScrollBarsClearCache();
 
             if (TextArea.TextEditorProperties.ShowHorizontalRuler)
             {

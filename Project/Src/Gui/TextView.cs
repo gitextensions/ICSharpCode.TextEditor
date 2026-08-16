@@ -700,6 +700,64 @@ namespace ICSharpCode.TextEditor
         }
 
         /// <summary>
+        ///     Returns the width of <paramref name="line" /> expressed in <see cref="WideSpaceWidth" /> units,
+        ///     which is the unit the horizontal scrollbar operates in.
+        /// </summary>
+        /// <remarks>
+        ///     <see cref="GetVisualColumnFast" /> assumes that every character is exactly one column wide.
+        ///     That assumption does not hold for glyphs which are wider than 'x' - CJK characters, emoji,
+        ///     glyphs taken from a fallback font, or any proportional font - so a line containing them ends up
+        ///     being reported as narrower than it is painted. This method measures the glyphs instead,
+        ///     word by word with the fonts the highlighting assigns, mirroring <see cref="PaintLinePart" />.
+        /// </remarks>
+        public int GetVisualWidthColumns(Graphics g, LineSegment line)
+        {
+            var fontContainer = TextEditorProperties.FontContainer;
+            var tabWidth = WideSpaceWidth*Document.TextEditorProperties.TabIndent;
+            var lineOffset = line.Offset;
+            var width = 0;
+            var measured = 0;
+
+            var words = line.Words;
+            if (words is not null)
+            {
+                for (var i = 0; i < words.Count; i++)
+                {
+                    var word = words[i];
+                    switch (word.Type)
+                    {
+                        case TextWordType.Space:
+                            width += SpaceWidth;
+                            break;
+                        case TextWordType.Tab:
+                            width = (width + MinTabWidth)/tabWidth*tabWidth + tabWidth;
+                            break;
+                        default:
+                            width += MeasureStringWidth(g, word.Word, word.GetFont(fontContainer) ?? fontContainer.RegularFont);
+                            break;
+                    }
+
+                    measured += word.Length;
+                }
+            }
+
+            // Whatever the highlighting has not covered - the whole line while it has not run yet, or a
+            // trailing remainder - still has to be accounted for, otherwise the line comes out too narrow
+            // again. There is no per-word font for it, so use the one WideSpaceWidth itself is derived from.
+            for (var i = measured; i < line.Length; ++i)
+            {
+                var ch = Document.GetCharAt(lineOffset + i);
+                if (ch == '\t')
+                    width = (width + MinTabWidth)/tabWidth*tabWidth + tabWidth;
+                else
+                    width += GetWidth(g, ch, fontContainer.RegularFont);
+            }
+
+            // round up so that a glyph which only partially reaches into the last column stays reachable
+            return (width + WideSpaceWidth - 1)/WideSpaceWidth;
+        }
+
+        /// <summary>
         ///     returns line/column for a visual point position
         /// </summary>
         public TextLocation GetLogicalPosition(Point mousePosition)
