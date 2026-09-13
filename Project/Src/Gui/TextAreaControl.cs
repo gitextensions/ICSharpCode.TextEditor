@@ -169,7 +169,7 @@ namespace ICSharpCode.TextEditor
 
         public void UpdateLayout()
         {
-            if (TextArea == null)
+            if (TextArea == null || !Visible)
                 return;
 
             adjustScrollBarsOnNextUpdate = false;
