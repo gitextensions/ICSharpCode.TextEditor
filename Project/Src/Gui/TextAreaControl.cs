@@ -35,13 +35,6 @@ namespace ICSharpCode.TextEditor
 
         private int[] lineLengthCache;
 
-        /// <summary>
-        ///     Kept for the lifetime of the control so that measuring line widths does not create a
-        ///     device context per layout pass. Created on first use, because the handle it needs does
-        ///     not exist yet while the control is being constructed.
-        /// </summary>
-        private Graphics measureGraphics;
-
         private TextEditorControl motherTextEditorControl;
         private Point scrollToPosOnNextUpdate;
 
@@ -113,12 +106,6 @@ namespace ICSharpCode.TextEditor
                     {
                         hRuler.Dispose();
                         hRuler = null;
-                    }
-
-                    if (measureGraphics != null)
-                    {
-                        measureGraphics.Dispose();
-                        measureGraphics = null;
                     }
                 }
 
@@ -294,23 +281,36 @@ namespace ICSharpCode.TextEditor
                     lineLengthCache = new int[lastLineIndex + LineLengthCacheAdditionalSize];
 
                 var maxLength = 0;
-                for (var lineIndex = firstLineIndex; lineIndex <= lastLineIndex; lineIndex++)
+
+                // The device context must not outlive this layout pass: a Graphics from
+                // Control.CreateGraphics() is bound to the control's current window handle and to a DC
+                // borrowed from the system cache, so keeping it across calls leaves a stale HDC which
+                // makes TextRenderer.MeasureText throw "Parameter is not valid".
+                Graphics measureGraphics = null;
+                try
                 {
-                    var lineSegment = Document.GetLineSegment(lineIndex);
-                    if (Document.FoldingManager.IsLineVisible(lineIndex))
+                    for (var lineIndex = firstLineIndex; lineIndex <= lastLineIndex; lineIndex++)
                     {
-                        if (lineLengthCache[lineIndex] > 0)
+                        var lineSegment = Document.GetLineSegment(lineIndex);
+                        if (Document.FoldingManager.IsLineVisible(lineIndex))
                         {
-                            maxLength = Math.Max(maxLength, lineLengthCache[lineIndex]);
-                        }
-                        else
-                        {
-                            measureGraphics ??= TextArea.CreateGraphics();
-                            var visualLength = view.GetVisualWidthColumns(measureGraphics, lineSegment);
-                            lineLengthCache[lineIndex] = Math.Max(1, visualLength);
-                            maxLength = Math.Max(maxLength, visualLength);
+                            if (lineLengthCache[lineIndex] > 0)
+                            {
+                                maxLength = Math.Max(maxLength, lineLengthCache[lineIndex]);
+                            }
+                            else
+                            {
+                                measureGraphics ??= TextArea.CreateGraphics();
+                                var visualLength = view.GetVisualWidthColumns(measureGraphics, lineSegment);
+                                lineLengthCache[lineIndex] = Math.Max(1, visualLength);
+                                maxLength = Math.Max(maxLength, visualLength);
+                            }
                         }
                     }
+                }
+                finally
+                {
+                    measureGraphics?.Dispose();
                 }
 
                 var hScrollBarVisible = HScrollBar.Value != 0 || maxLength > visibleColumnCount || (hScrollBarVisibleNow && VScrollBar.IsMouseDown);
